@@ -15,6 +15,17 @@
 #include "quick_sort.h"
 //#include "bitonic_sort.h"
 
+// Resolves Issue: https://stackoverflow.com/questions/30412951/unresolved-external-symbol-imp-fprintf-and-imp-iob-func-sdl2
+// Only occurs when using pre-build GSL libraries from VS2013--
+// Solution: Rebuild GSL with VS2015++
+#if defined(_MSC_VER) && (_MSC_VER >= 1900)
+FILE _iob[] = { *stdin, *stdout, *stderr };
+extern "C" FILE * __cdecl __iob_func(void)
+{
+	return _iob;
+}
+#endif
+
 namespace lossywave
 {
 

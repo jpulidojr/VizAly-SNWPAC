@@ -96,13 +96,13 @@ find_package(openmp)
 if (OPENMP_FOUND)
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-	set (EXTRA_LIBS ${EXTRA_LIBS} "openmp" )
+	#set (EXTRA_LIBS ${EXTRA_LIBS} "openmp" )
 endif()
 
 find_package(LZ4 REQUIRED)
 if (LZ4_FOUND)
 	include_directories(${LZ4_INCLUDE_DIR})
-	set (EXTRA_LIBS ${EXTRA_LIBS} ${LZ4_LIBRARY}} )
+	set (EXTRA_LIBS ${EXTRA_LIBS} ${LZ4_LIBRARY} )
 endif()
 
 # add library dependencies

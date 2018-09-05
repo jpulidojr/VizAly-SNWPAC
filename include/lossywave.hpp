@@ -1,5 +1,3 @@
-
-
 #ifndef LOSSYWAVE_H
 #define LOSSYWAVE_H
 
