@@ -1,0 +1,5 @@
+dimension_size 512 512 512
+header_size 192
+scalar_fields 5
+field_names density_scalars velx_scalars vely_scalars velz_scalars pressure_scalars
+num_blocks 1
