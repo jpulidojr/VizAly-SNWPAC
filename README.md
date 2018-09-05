@@ -5,6 +5,7 @@ LossyWave is a cubic B-Spline wavelet compressor for regular grid datasets. The 
 ## Contributors
 
 Lead Developer: Jesus Pulido
+
 Supervisor: Bernd Hamann
 
 ## Copyright and license
