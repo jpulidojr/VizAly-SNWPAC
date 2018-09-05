@@ -47,11 +47,11 @@ if( WIN32 AND NOT CYGWIN AND NOT MSYS )
     set( GSL_LIBRARIES ${GSL_LIBRARY} ${GSL_CBLAS_LIBRARY} )
   endif( GSL_INCLUDE_DIR )
   
-  mark_as_advanced(
-    GSL_INCLUDE_DIR
-    GSL_LIBRARY
-    GSL_CBLAS_LIBRARY
-  )
+  #mark_as_advanced(
+  #  GSL_INCLUDE_DIR
+  #  GSL_LIBRARY
+  #  GSL_CBLAS_LIBRARY
+  #)
 else( WIN32 AND NOT CYGWIN AND NOT MSYS )
   if( UNIX OR MSYS )
 		find_program( GSL_CONFIG_EXECUTABLE gsl-config

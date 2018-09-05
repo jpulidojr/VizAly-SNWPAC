@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.6)
 
 # TODO: Make sure source files are added into the msvc project to compile correctly
 
-project(lossywave LANGUAGES CXX)
+project(lossywave LANGUAGES C CXX)
 
 string(TOUPPER ${PROJECT_NAME} NAME_ID)
 
@@ -12,6 +12,7 @@ option(${NAME_ID}_BUILD_STATIC
 	ON
 )
 
+# TODO: Automate this
 option(${NAME_ID}_INSTALL
 	"Install the include headers and the static target (if build) of ${PROJECT_NAME}."
 	ON
@@ -19,14 +20,13 @@ option(${NAME_ID}_INSTALL
 
  option(${NAME_ID}_TESTS
  	"Build tests for ${PROJECT_NAME}."
- 	ON
+ 	OFF
  )
 
 set(PROJECT_SOURCE_FILES
 	src/lossywave.cpp
 	src/writer.cpp
 	src/reader.cpp
-	src/byte_buffer.cpp
 	src/quick_sort.cpp
 	src/bitonic_sort.cpp
 )
@@ -96,10 +96,10 @@ find_package(openmp)
 if (OPENMP_FOUND)
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-	set (EXTRA_LIBS ${EXTRA_LIBS} "openmp"} )
+	set (EXTRA_LIBS ${EXTRA_LIBS} "openmp" )
 endif()
 
-find_package(lz4 REQUIRED)
+find_package(LZ4 REQUIRED)
 if (LZ4_FOUND)
 	include_directories(${LZ4_INCLUDE_DIR})
 	set (EXTRA_LIBS ${EXTRA_LIBS} ${LZ4_LIBRARY}} )
