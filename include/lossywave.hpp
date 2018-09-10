@@ -35,6 +35,13 @@ namespace lossywave
 	protected:
 		int pcnt, lvl,  nthreads;
 		int * params;
+		int mode;
+
+		template <typename T>
+		void analyze(T * data);
+
+		template <typename T>
+		size_t encode(T * in, void *& out);
 	};
 
 
