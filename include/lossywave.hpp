@@ -30,7 +30,7 @@ namespace lossywave
 
 		// data = compressed byte stream
 		// output = n-D data array
-		EXPORT size_t decompress(void *data, void * output);
+		EXPORT size_t decompress(void *data, void *& output);
 
 	protected:
 		int pcnt, lvl,  nthreads;
@@ -42,6 +42,8 @@ namespace lossywave
 
 		template <typename T>
 		size_t encode(T * in, void *& out);
+		template <typename T>
+		size_t decode(T * in, void *& out);
 	};
 
 

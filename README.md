@@ -1,6 +1,9 @@
 # VizAly-LossyWave: A lossy, wavelet-based compressor for scientific simulation data
 
-LossyWave is a cubic B-Spline wavelet compressor for regular grid datasets. The goal for this method is for smart data reduction via lossy compression.
+LossyWave is a cubic B-Spline wavelet compressor for regular grid datasets (1D,2D,3D). The goal for this method is to provide a low cost, low overhead compression method for smart data reduction via a series of parameters achieving targetted levels of lossyness.
+
+## Usage
+
 
 ## Contributors
 
