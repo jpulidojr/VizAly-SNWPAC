@@ -42,8 +42,9 @@ namespace lossywave
 
 		template <typename T>
 		size_t encode(T * in, void *& out);
+
 		template <typename T>
-		size_t decode(T * in, void *& out);
+		size_t decode(void * in, T *& out);
 	};
 
 

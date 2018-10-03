@@ -8,7 +8,7 @@ project(lossywave_test CXX)
 
 # add source files
 set(PROJECT_SOURCE_FILES
-    src/main.cpp
+    lossywave_test.cpp
 )
 
 # add header files

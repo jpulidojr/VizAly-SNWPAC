@@ -11,7 +11,8 @@
 
 #include "quick_sort.h"
 
-static int CmpDbl(const void *a, const void *b){
+static int CmpDbl(const void *a, const void *b)
+{
     double aa = *(double*)a;
     double bb = *(double*)b;
     if(aa<bb)
@@ -25,7 +26,8 @@ static int CmpDbl(const void *a, const void *b){
     if ( *(double*)a == *(double*)b ) return 0;*/
 }
 
-static int CmpDblInd(const void *a, const void *b){
+static int CmpDblInd(const void *a, const void *b)
+{
     ind_val aa = *(ind_val*)a;
     ind_val bb = *(ind_val*)b;
     if(aa.value<bb.value)
@@ -36,7 +38,8 @@ static int CmpDblInd(const void *a, const void *b){
         return 0;
 }
 
-void merge(double * A, double * B, size_t m, size_t n, int dir){
+void merge(double * A, double * B, size_t m, size_t n, int dir)
+{
     int i=0, j=0, k=0;
     size_t size = m+n;
 
@@ -77,7 +80,8 @@ void merge(double * A, double * B, size_t m, size_t n, int dir){
     delete[] C;
 }
 
-void arraymerge(double *a, size_t size, size_t *index, int N, int dir){
+void arraymerge(double *a, size_t size, size_t *index, int N, int dir)
+{
 #ifdef _WIN32
     long long i;
 #else
@@ -102,7 +106,8 @@ void arraymerge(double *a, size_t size, size_t *index, int N, int dir){
     }
 }
 
-void quick_sort(double * output, double * input, int dir, size_t total){
+void quick_sort(double * output, double * input, int dir, size_t total)
+{
     // copy into output
 #ifdef _WIN32
     long long i;
@@ -153,7 +158,8 @@ void quick_sort(double * output, double * input, int dir, size_t total){
 }
 
 
-void quick_sort_index(size_t * index, double * input, int dir, size_t total){
+void quick_sort_index(size_t * index, double * input, int dir, size_t total)
+{
 
 #ifdef _WIN32
     long long i;
