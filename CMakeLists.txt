@@ -20,7 +20,7 @@ option(${NAME_ID}_INSTALL
 
  option(${NAME_ID}_TESTS
  	"Build tests for ${PROJECT_NAME}."
- 	OFF
+ 	ON
  )
 
 set(PROJECT_SOURCE_FILES
