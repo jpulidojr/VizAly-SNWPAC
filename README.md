@@ -10,7 +10,7 @@ GSL 1.16 (with cubic B-Spline patches)
 LZ4 1.8.2
 
 ## Usage
-
+```
 mkdir build
 cd build
 cmake ..
@@ -18,7 +18,7 @@ cmake ..
 make -j
 cd tests
 ./lossywave_test
-
+```
 ## Contributors
 
 Lead Developer: Jesus Pulido
