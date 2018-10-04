@@ -233,7 +233,7 @@ int save_coefficients_md(T * data, const char * filename, int * args)
 	// Check if we are using lz4 on coefficients
 	if (args[2] >= 118)
 	{
-		cout << "Beginning LZ4 Routines...";
+		std::cout << "Beginning LZ4 Routines...";
 		// Optional: Perform floating point to integer requantization:
 		// No Requantization if args[2]=128
 		// When it's 125, it's 128-125 = 3. We divide by 1000
@@ -276,7 +276,7 @@ int save_coefficients_md(T * data, const char * filename, int * args)
 
 		if (totBytes > LZ4_MAX_INPUT_SIZE)
 		{
-			cout << "Warning: Data to write is larger than supported by Lz4. Use rolling buffer!!\n";
+			std::cout << "Warning: Data to write is larger than supported by Lz4. Use rolling buffer!!\n";
 			datBytes = LZ4_MAX_INPUT_SIZE;
 		}
 
@@ -349,7 +349,7 @@ int save_coefficients_md(T * data, const char * filename, int * args)
 		delete[] cmpBuf;
 		LZ4_freeStream(lz4Stream);
 
-		cout << "..Done LZ4!\n";
+		std::cout << "..Done LZ4!\n";
 	}
     // Check if we are encoding coefficients with RLE
     else if(args[2] >= 64)

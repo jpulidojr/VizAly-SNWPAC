@@ -401,7 +401,7 @@ T * read_coefficients_md(const char * filename, int * args)
         }
         std::cout<<"...Coefficient's loaded\n";
 
-        std::cout << "Bytes Read (w header): " << rbytes+32 << endl;
+        std::cout << "Bytes Read (w header): " << rbytes+32 << std::endl;
         std::cout << "Contiguous times: " << skip_cnt << std::endl;
         std::cout << "Values Read: " << val_read << std::endl;
 

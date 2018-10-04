@@ -5,6 +5,7 @@
 #include <complex>
 #include <time.h>
 #include <omp.h>
+#include <cstring>
 
 // Wavelet functions
 #include "wavelet.h"
@@ -562,7 +563,7 @@ namespace lossywave
 		T * output = static_cast<T *>(out);
 		
 		if (sizeof(T) != params[10])
-			std::cout << "Warning: Header Data Precision " << params[10] << " does not match target " << sizeof T << std::endl;
+			std::cout << "Warning: Header Data Precision " << params[10] << " does not match target " << sizeof(T) << std::endl;
 
 		
 		//std::cout << "Opening "<< filename << std::endl;

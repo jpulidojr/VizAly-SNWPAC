@@ -8,6 +8,10 @@
 
 #include <gsl/gsl_wavelet.h>
 
+#include <vector>
+
+using namespace std;
+
 #define ELEMENT(a,stride,i) ((a)[(stride)*(i)])
 #define ELEMENT3(a,stride,i,j,k) ((a)[(i)+(stride)*(j)+(stride)*(stride)*(k)])
 #define ELEMENT3D(a,i,j,k) ((a)[(i)+(j)+(k)])
@@ -1017,7 +1021,7 @@ int gsl_wavelet3d_nstransform_proto (const gsl_wavelet * w,
 	std::cout << "Size of Data pointer: " << sizeof(data[0]) << std::endl;
 
     //omp_set_num_threads(1);
-    
+    /*
 
     //if (size1 != size2 || size2 != size3)
     //{
@@ -1047,7 +1051,7 @@ int gsl_wavelet3d_nstransform_proto (const gsl_wavelet * w,
 	size_t divz=size3;
  
 	//Predict output size	  
-	while(dixv>1)
+	while(divx>1)
 	{
 		if(divx%2 == 0)
 		{
@@ -1062,7 +1066,7 @@ int gsl_wavelet3d_nstransform_proto (const gsl_wavelet * w,
 			totx+=1;
 		}
 	}
-	while(diyv>1)
+	while(divy>1)
 	{
 		if(divy%2 == 0)
 		{
@@ -1132,7 +1136,7 @@ int gsl_wavelet3d_nstransform_proto (const gsl_wavelet * w,
 
 		    size_t loc=tot-sizes[sizes.size()-1];
 
-            /* for every x */
+            // for every x
 			if( xcnt >= 0 )
 			{
 				#pragma omp parallel shared(data)
@@ -1155,7 +1159,7 @@ int gsl_wavelet3d_nstransform_proto (const gsl_wavelet * w,
 					xloc=0;
 			}
 
-            /* for every y */
+            // for every y 
 			if( ycnt >= 0 )
 			{
 				#pragma omp parallel shared(data)
@@ -1179,7 +1183,7 @@ int gsl_wavelet3d_nstransform_proto (const gsl_wavelet * w,
 					yloc=0;
 			}
 
-            /* for every z */
+            //for every z 
 			if( zcnt >= 0 )
 			{
 				#pragma omp parallel shared(data)
@@ -1203,23 +1207,6 @@ int gsl_wavelet3d_nstransform_proto (const gsl_wavelet * w,
 					zloc=0;
 			}
 
-            /*if (i > 16) //output intermediate coefficients for visualization
-            {
-                char filenm[200];
-                sprintf_s(filenm, "D:/rstrt/128_rstrt_twelve_bior4_4_coeffs_at_%lld.vti",i/2);
-                double**** output3 = new double***[1];
-                output3[0] = arrayto3D(data,size1, size2, size3);
-                arr_to_vti_3d_range_scale(output3,filenm,0,size1-1, 0,size2-1,0, size3-1, 1);
-                //arr_to_vti_3d_range_scale(output3,filenm,0,(int)i/2-1, 0,(int)i/2-1,0, (int)i/2-1, 1); // This saves only the coarse coeffs
-                printf( "Done writing intermediate coeff file\n" );
-                for(size_t i=0; i < size1; i++)
-                {
-                    for(size_t j=0; j<size2; j++)
-                        delete output3[0][i][j];
-                    delete output3[0][i];
-                } delete output3[0];
-            }*/
-
             start2 = omp_get_wtime()-start2;
             std::cout.precision(10);
         std::cout << "Forward Transform level " << i << " done. OMP Time elapsed = " << start2 << " secs" << std::endl;
@@ -1233,7 +1220,7 @@ int gsl_wavelet3d_nstransform_proto (const gsl_wavelet * w,
         {
             //i=ceil(pm);
             //std::cout << i << "\n";
-            /* for every z */
+            // for every z 
             #pragma omp parallel shared(data)
             {
                 gsl_wavelet_workspace * work1;
@@ -1250,7 +1237,7 @@ int gsl_wavelet3d_nstransform_proto (const gsl_wavelet * w,
                 }
             }
 
-            /* for every y */
+            // for every y 
             #pragma omp parallel shared(data)
             {
                 gsl_wavelet_workspace * work1;
@@ -1267,7 +1254,7 @@ int gsl_wavelet3d_nstransform_proto (const gsl_wavelet * w,
                 }
             }
 
-            /* for every x */
+            // for every x 
             #pragma omp parallel shared(data)
             {
                 gsl_wavelet_workspace * work1;
@@ -1285,7 +1272,7 @@ int gsl_wavelet3d_nstransform_proto (const gsl_wavelet * w,
 
             }
         }
-    }
+    }*/
 
     return GSL_SUCCESS;
 }
