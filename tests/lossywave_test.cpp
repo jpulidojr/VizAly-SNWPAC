@@ -1,3 +1,10 @@
+// lossywave_test.cpp
+// Author: Jesus Pulido
+// Simple example on how to use LossyWave
+// 
+// Usage: ./lossywave_test {pcnt}
+//	  	  {pcnt} = Threshold percentage
+
 #include <stdio.h>
 #include <iostream> 
 //#include <math.h>
@@ -14,12 +21,7 @@ int argv_lvl=0;
 
 int main (int argc, char **argv)
 {
-	/* // legacy args input 
-    bool useLevel=false;
-	bool save_coeff=true;
-	bool save_bin=false;
-	bool save_vti=false;
-
+	
     if(argc == 2)
     {
         argv_pcnt = atof(argv[1]);
@@ -31,13 +33,12 @@ int main (int argc, char **argv)
         argv_lvl = atoi(argv[2]);
         if(argv_pcnt == 100)
         {
-            useLevel=true;
             cout << "Input level is " << argv_lvl << endl;
         }else{
             cout << "Input percentage is " << argv_pcnt << endl;
         }
     }
-	*/
+	
 
 	// Create dummy dataset
     int * dims = new int[3];
@@ -58,7 +59,7 @@ int main (int argc, char **argv)
 	int args[13] = { 404, 0, 128, 0, 
 					dims[0], dims[1], dims[2], 
 					dims[0], dims[1], dims[2], 
-					sizeof(input3d[0]), 2, 0 };
+					sizeof(input3d[0]), argv_pcnt, 0 };
 	// -------- Parameters ----------
 	// { wave_type:404, chunk_level:0, region+compression_type , padding,
 	//	local_dimx, local_dimy, local_dimz,

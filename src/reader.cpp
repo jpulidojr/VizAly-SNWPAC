@@ -809,9 +809,9 @@ int dbto3Darray(double *** in,int xl,int xu, int yl,int yu, int zl, int zu, int 
 #ifdef __cplusplus_cli
     //gcroot<String^> serverName = gcnew String("gwwn1");
 	//gcroot<String^> codeDbName = gcnew String("mhddev");
-    //String^ cString = String::Format("server={0};database={1};User ID=turbquery;Password=aa2465ways2k;", serverName, codeDbName);
-    System::String ^ cString = "server=gwwn1;database=mhddev;User ID=turbquery;Password=aa2465ways2k;";
-    //System::String ^ cString = "server=dsp048;database=turblib;User ID=jpulido;Password=pulido;";
+    //String^ cString = String::Format("server={0};database={1};User ID=###;Password=###;", serverName, codeDbName);
+    System::String ^ cString = "server=gwwn1;database=mhddev;User ID=###;Password=###;";
+    //System::String ^ cString = "server=dsp048;database=turblib;User ID=###;Password=###;";
     // For D.Livescu's data, the data is fast axis (x) wide into 8 partitions
     SqlConnection ^ sqlcon = gcnew SqlConnection(cString);
     sqlcon->Open();

@@ -383,8 +383,9 @@ static void dwt_step (const gsl_wavelet * w, T *a, size_t stride, size_t n, gsl_
 }
 
 
-static void
-dwt_step_proto (const gsl_wavelet * w, double *a, size_t stride, size_t n,
+
+template <typename T> 
+static void dwt_step_proto (const gsl_wavelet * w, T *a, size_t stride, size_t n,
           gsl_wavelet_direction dir, gsl_wavelet_workspace * work)
     {
     double ai, ai1;
@@ -1695,9 +1696,11 @@ int wavelet_transform (const gsl_wavelet * w,
       return 0; // success
   }
   
-
+ 
   if(!enableOdd)
-  {
+  {   // Enables the fast dwt_step (with bit-shifts) when data is power of 2
+	  // Preserves the original size of data array
+
 	  //int limit_x=binary_upto_logn(n);
 	  if (dir == gsl_wavelet_forward)
 	  {
@@ -1725,9 +1728,10 @@ int wavelet_transform (const gsl_wavelet * w,
 		  }
 	  }
   }
-  else
-  {
-
+  else 
+  {   // Enables the processing of non power of 2 sized data (slower)
+	  // Increases or decreases size of array to accomodate non-even sized levels
+	  
 	  if (dir == gsl_wavelet_forward)
 	  {
 		  // Create new data size

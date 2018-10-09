@@ -78,7 +78,7 @@ namespace lossywave
 		gsl_wavelet_workspace *work;
 		size_t type = 303; // Cubic B-splines
 		w = gsl_wavelet_alloc(gsl_wavelet_bspline, type);
-		gsl_wavelet_print(w);
+		//gsl_wavelet_print(w);
 
 		std::cout << "Total threads in this machine: " << omp_get_max_threads() << std::endl;
 
@@ -88,14 +88,26 @@ namespace lossywave
 		if (val < pDims[1]) val = pDims[1];
 		if (val < pDims[2]) val = pDims[2];
 
-		size_t total = pDims[0] * pDims[1] * pDims[2];
-		int stride = pDims[0];
-
-		if (mode == 1)
-			work = gsl_wavelet_workspace_alloc(total); //Normal during 1D decomp
-		else
-			work = gsl_wavelet_workspace_alloc(val); //Normal during 3d Decomp
+		size_t total; int stride;
 		
+		switch (mode)
+		{
+		case 1:
+			total = val; stride = 1;
+			work = gsl_wavelet_workspace_alloc(total); //Normal during 1D decomp
+			break;
+		case 2:
+			total = pDims[0] * pDims[1]; stride = pDims[0];
+			work = gsl_wavelet_workspace_alloc(val);
+			break;
+		case 3:
+			total = pDims[0] * pDims[1] * pDims[2]; stride = pDims[0];
+			work = gsl_wavelet_workspace_alloc(val); //Normal during 3d Decomp
+			break;
+		default:
+			std::cout << "unsupported dimension" << std::endl; abort();
+		}
+
 		// copy data
 		std::memcpy(output, data, total*params[10]);
 
@@ -106,7 +118,8 @@ namespace lossywave
 		double start2 = omp_get_wtime();
 
 		if (mode == 1)
-		{}//wavelet_transform(w, static_cast<float*>(output), 1, total, gsl_wavelet_forward, work);
+		    wavelet_transform(w, (float*&)(output), stride, total, gsl_wavelet_forward, work);
+			//gsl_wavelet_transform(w, static_cast<double *>(output), stride, total, gsl_wavelet_forward, work);
 		else if (mode == 2)
 			wavelet2d_nstransform(w, static_cast<float *>(output), stride, pDims[0], pDims[1], gsl_wavelet_forward, work);
 		else if (mode == 3)
@@ -122,9 +135,9 @@ namespace lossywave
 
 
 		float * woutput = static_cast<float *>(output);
-		// sort data and threshold by pcnt
-		if (lvl==0) //useLevel = false
-		{
+
+		if (lvl==0) 
+		{   // Percentage-based thresholding
 			std::cout << "Beginning sort\n";
 			double * abscoeff = new double[total];
 			size_t * p = new size_t[total];
@@ -157,51 +170,59 @@ namespace lossywave
 			delete[] p;
 		}
 		else
-		{
-			// Compute available levels
-			int max_levels = 0;
-			int curdim = pDims[0];
-			while (curdim >= 2)
+		{   // Level-based thresholding
+			if (mode == 2)
 			{
-				max_levels += 1;
-				curdim /= 2;
+				std::cout << "2D level-thresholding not yet implemented." << std::endl;
 			}
-
-			// Calculate dimensions per each level
-			int *** cdims = getCoeffDims(pDims[0], pDims[1], pDims[2]);
-
-			std::cout << "Thresholding by level: " << lvl << " of " << max_levels << std::endl;
-			start = clock();
-			int curdims[3] = { pDims[0],pDims[1],pDims[2] };
-			for (int lv = lossywave::lvl; lv < max_levels; lv++)
+			if (mode == 3)
 			{
-				int lvlsz = cdims[lv][0][1] + 1; // xmax+1 assuming 3D cube
-				lvlsz = lvlsz * lvlsz*lvlsz;
-				for (int i = 1; i < 8; i++)
+				// Compute available levels
+				int max_levels = 0;
+				int curdim = pDims[0]; //assumes dim0 is largest not always true
+				while (curdim >= 2)
 				{
-					double * LLL;// = getCutout3d(woutput, cdims[lv][i], curdims);
-					for (int index = 0; index < lvlsz; index++)
-						LLL[index] = 0.0;
-
-					//setCutout3d(woutput, LLL, cdims[lv][i], curdims);
-					delete[] LLL;
+					max_levels += 1;
+					curdim /= 2;
 				}
-			}
 
-			// Free cdims
-			for (int i = max_levels - 1; i >= 0; i--)
-			{
-				for (int c = 0; c < 8; c++)
+				// Calculate dimensions per each level
+				int *** cdims = getCoeffDims(pDims[0], pDims[1], pDims[2]);
+
+				std::cout << "Thresholding by level: " << lvl << " of " << max_levels << std::endl;
+				start = clock();
+				int curdims[3] = { pDims[0],pDims[1],pDims[2] };
+				// Start from threshold level and zero out the rest up the hierarchy
+				for (int lv = lossywave::lvl; lv < max_levels; lv++)
 				{
-					delete cdims[i][c];
-				}
-				delete cdims[i];
-			}
-			delete cdims;
-			cdims = NULL;
+					int lvlsz = cdims[lv][0][1] + 1; // xmax+1 assuming 3D cube
+					lvlsz = lvlsz * lvlsz*lvlsz;
+					for (int i = 1; i < 8; i++)
+					{
+						float * LLL = getCutout3d(woutput, cdims[lv][i], curdims);
+						for (int index = 0; index < lvlsz; index++)
+							LLL[index] = 0.0;
 
-			secs = (clock() - start) / (double)1000;
-			std::cout << "Ending Threshold. Time elapsed = " << secs << " secs" << std::endl;
+						setCutout3d(woutput, LLL, cdims[lv][i], curdims);
+						delete[] LLL;
+					}
+				}
+
+				// Free cdims
+				for (int i = max_levels - 1; i >= 0; i--)
+				{
+					for (int c = 0; c < 8; c++)
+					{
+						delete cdims[i][c];
+					}
+					delete cdims[i];
+				}
+				delete cdims;
+				cdims = NULL;
+
+				secs = (clock() - start) / (double)1000;
+				std::cout << "Ending Threshold. Time elapsed = " << secs << " secs" << std::endl;
+			}
 		}
 
 		// requantize and encode coefficients
@@ -239,21 +260,31 @@ namespace lossywave
 		if (val < pDims[1]) val = pDims[1];
 		if (val < pDims[2]) val = pDims[2];
 
-		size_t total = pDims[0] * pDims[1] * pDims[2];
-		int stride = pDims[0];
+		size_t total; int stride;
 
-		if (mode == 1)
+		switch (mode)
+		{
+		case 1:
+			total = val; stride = 1;
 			work = gsl_wavelet_workspace_alloc(total); //Normal during 1D decomp
-		else
+			break;
+		case 2:
+			total = pDims[0] * pDims[1]; stride = pDims[0];
+			work = gsl_wavelet_workspace_alloc(val);
+			break;
+		case 3:
+			total = pDims[0] * pDims[1] * pDims[2]; stride = pDims[0];
 			work = gsl_wavelet_workspace_alloc(val); //Normal during 3d Decomp
-
+			break;
+		default:
+			std::cout << "unsupported dimension" << std::endl; abort();
+		}
 
 		clock_t start = clock();
 		double start2 = omp_get_wtime();
 
 		if (mode == 1)
-		{
-		}//wavelet_transform(w, static_cast<float*>(output), 1, total, gsl_wavelet_forward, work);
+		    wavelet_transform(w, out, stride, total, gsl_wavelet_backward, work);
 		else if (mode == 2)
 			wavelet2d_nstransform(w, out, stride, pDims[0], pDims[1], gsl_wavelet_backward, work);
 		else if (mode == 3)
