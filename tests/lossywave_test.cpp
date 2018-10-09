@@ -50,17 +50,17 @@ int main (int argc, char **argv)
         for(int j=0; j< dims[1]; j++)
 			for (int k = 0; k < dims[2]; k++)
 			{
-				input3d[cnt] = 1;// i + j + k;
+				input3d[cnt] = i + j + k;
 				cnt++;
 			}
 
 	// Set compression parameters
-	int args[13] = { 303, 0, 128, 0, 
+	int args[13] = { 404, 0, 128, 0, 
 					dims[0], dims[1], dims[2], 
 					dims[0], dims[1], dims[2], 
-					sizeof(input3d[0]), 100, 0 };
+					sizeof(input3d[0]), 2, 0 };
 	// -------- Parameters ----------
-	// { wave_type:303, chunk_level:0, region+compression_type , padding,
+	// { wave_type:404, chunk_level:0, region+compression_type , padding,
 	//	local_dimx, local_dimy, local_dimz,
 	//	global_dimx, global_dimy, global_dimz,
 	//  value_size, pcnt_threshold, level_threshold }

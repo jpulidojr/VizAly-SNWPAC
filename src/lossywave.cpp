@@ -12,8 +12,8 @@
 
 // Sorting algorithms
 #include <algorithm>
-#include <gsl/gsl_sort.h>
 #include "quick_sort.h"
+//#include <gsl/gsl_sort.h>
 //#include "bitonic_sort.h"
 
 // Resolves Issue: https://stackoverflow.com/questions/30412951/unresolved-external-symbol-imp-fprintf-and-imp-iob-func-sdl2

@@ -1,5 +1,7 @@
 /* Code based off of:
    http://www.cs.rutgers.edu/~venugopa/parallel_summer2012/bitonic_openmp.html
+
+   Adapted to track indices
 */
 
 #include <stdio.h>

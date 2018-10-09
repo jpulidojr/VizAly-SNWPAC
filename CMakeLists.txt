@@ -41,6 +41,11 @@ set(PROJECT_HEADER_FILES
 	include/bitonic_sort.h
 	include/wavelet.h
 	include/wavelet.inl
+    include/gsl/gsl_wavelet.h
+    include/gsl/gsl_types.h
+    include/gsl/gsl_types.h
+    include/gsl/bspline.c
+    include/gsl/wavelet.c
 )
 
 # interface header files for install
@@ -74,6 +79,9 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 	CXX_EXTENSIONS OFF
 )
 
+# Enable fPIC for linux
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 # add include directories
 target_include_directories(${PROJECT_NAME}
 	PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -82,21 +90,13 @@ target_include_directories(${PROJECT_NAME}
 # External Dependencies
 set (EXTRA_LIBS "")
 
-#if(NOT GSL_FOUND)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
-#endif(NOT GSL_FOUND)
 
-find_package(GSL REQUIRED)
-if(GSL_FOUND)
-	include_directories(${GSL_INCLUDE_DIRS})
-	set (EXTRA_LIBS ${EXTRA_LIBS} ${GSL_LIBRARIES} )
-endif()
-
-find_package(openmp)
+find_package(OpenMP)
 if (OPENMP_FOUND)
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-	#set (EXTRA_LIBS ${EXTRA_LIBS} "openmp" )
+    set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
 endif()
 
 find_package(LZ4 REQUIRED)

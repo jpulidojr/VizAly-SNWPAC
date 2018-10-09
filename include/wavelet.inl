@@ -476,22 +476,22 @@ wavelet2d_transform (const gsl_wavelet * w,
 
   if (size1 != size2)
     {
-      GSL_ERROR ("2d dwt works only with square matrix", GSL_EINVAL);
+	  std::cout << "2d dwt works only with square matrix" << std::endl; abort();
     }
 
   if (work->n < size1)
     {
-      GSL_ERROR ("not enough workspace provided", GSL_EINVAL);
+	  std::cout << "not enough workspace provided" << std::endl; abort();
     }
 
   if (binary_logn (size1) == -1)
     {
-      GSL_ERROR ("n is not a power of 2", GSL_EINVAL);
+	  std::cout << "n is not a power of 2" << std::endl; abort();
     }
 
   if (size1 < 2)
     {
-      return GSL_SUCCESS;
+      return 0; // success
     }
 
   if (dir == gsl_wavelet_forward)
@@ -517,7 +517,7 @@ wavelet2d_transform (const gsl_wavelet * w,
         }
     }
 
-  return GSL_SUCCESS;
+  return 0; // success
 }
 
 // Non-standard 2D wavelet transform x,y
@@ -536,7 +536,7 @@ int wavelet2d_nstransform (const gsl_wavelet * w,
 
   if (work->n < size1 || work->n < size2 )
     {
-      GSL_ERROR ("not enough workspace provided", GSL_EINVAL);
+	  std::cout << "not enough workspace provided" << std::endl; abort();
     }
 
   if (binary_logn (size1) == -1 || binary_logn(size2))
@@ -548,7 +548,7 @@ int wavelet2d_nstransform (const gsl_wavelet * w,
 
   if (size1 < 2)
     {
-      return GSL_SUCCESS;
+      return 0; // success
     }
 
   int limit_x=binary_upto_logn(size1);
@@ -584,7 +584,7 @@ int wavelet2d_nstransform (const gsl_wavelet * w,
         }
     }
 
-  return GSL_SUCCESS;
+  return 0; // success
 }
 
 // Standard transform (deprecated)
@@ -592,28 +592,28 @@ template <typename T>
 int gsl_wavelet3d_transform (const gsl_wavelet * w, 
                          T *data, size_t tda, size_t size1,
                          size_t size2,size_t size3, gsl_wavelet_direction dir,
-                         gsl_wavelet_workspace * work, double *result)
+                         gsl_wavelet_workspace * work)
 {
     size_t i,j,k;
 
     if (size1 != size2 || size3 != size2 || size1 != size3)
     {
-        GSL_ERROR ("3d dwt works only with square datasets", GSL_EINVAL);
+		std::cout << "3d dwt works only with square datasets" << std::endl; abort();
     }
 
     if (work->n < size1)
     {
-        GSL_ERROR ("not enough workspace provided", GSL_EINVAL);
+		std::cout << "not enough workspace provided" << std::endl; abort();
     }
 
     if (binary_logn (size1) == -1)
     {
-        GSL_ERROR ("n is not a power of 2", GSL_EINVAL);
+		std::cout << "n is not a power of 2" << std::endl; abort();
     }
 
     if (size1 < 2)
     {
-        return GSL_SUCCESS;
+        return 0; // success
     }
 
     T * tmp = new T[size1*size2];
@@ -803,7 +803,7 @@ int gsl_wavelet3d_transform (const gsl_wavelet * w,
     }
     delete tmp;
 
-    return GSL_SUCCESS;
+    return 0; // success
 }
 
 
@@ -826,12 +826,12 @@ int gsl_wavelet3d_nstransform (const gsl_wavelet * w,
     if (size1 != size2 || size2 != size3)
     {
         //GSL_ERROR ("3d dwt works only with square datasets", GSL_EINVAL);
-        printf("Warning: 3d dwt isnt a square dataset, uneven operations enabled\n");
+		std::cout << "Warning: 3d dwt isnt a square dataset, uneven operations enabled" << std::endl;
     }
 
     if (work->n < size1 || work->n < size2 || work->n < size3)
     {
-        GSL_ERROR ("not enough workspace provided", GSL_EINVAL);
+		std::cout << "not enough workspace provided" << std::endl; abort();
     }
 
     if (binary_logn (size1) == -1 || binary_logn (size2) == -1 || binary_logn (size3) == -1)
@@ -839,12 +839,12 @@ int gsl_wavelet3d_nstransform (const gsl_wavelet * w,
         //GSL_ERROR ("n is not a power of 2", GSL_EINVAL);
         printf("Warning: n is not a power of 2! n= %d,%d,%d\n",size1,size2,size3);
         printf("       : operations will be up to= %d,%d,%d\n",binary_upto_logn(size1),binary_upto_logn(size2),binary_upto_logn(size3));
-        GSL_ERROR ("n is not a power of 2", GSL_EINVAL);
+		std::cout << "n is not a power of 2" << std::endl; abort();
     }
 
     if (size1 < 2)
     {
-        return GSL_SUCCESS;
+        return 0; // success
     }
     // Compute the multiplier amount for 2 multiplication
    /* double am=size1;
@@ -1003,7 +1003,7 @@ int gsl_wavelet3d_nstransform (const gsl_wavelet * w,
         }
     }
 
-    return GSL_SUCCESS;
+    return 0; // success
 }
 
 
@@ -1109,7 +1109,7 @@ int gsl_wavelet3d_nstransform_proto (const gsl_wavelet * w,
 
     if (size1 < 2)
     {
-        return GSL_SUCCESS;
+        return 0; // success
     }
 
     if (dir == gsl_wavelet_forward)
@@ -1274,7 +1274,7 @@ int gsl_wavelet3d_nstransform_proto (const gsl_wavelet * w,
         }
     }*/
 
-    return GSL_SUCCESS;
+    return 0; // success
 }
 
 template <typename T> int gsl_wavelet3d_nstransform (const gsl_wavelet * w, 
@@ -1290,14 +1290,14 @@ template <typename T> int gsl_wavelet3d_nstransform (const gsl_wavelet * w,
 
     if (size1 != size2 || size2 != size3)
     {
-        GSL_ERROR ("3d dwt works only with square datasets", GSL_EINVAL);
+		std::cout << "3d dwt works only with square datasets" << std::endl; abort();
         //printf("Warning: 3d dwt isnt a square dataset, uneven operations enabled\n");
 		return -1;
     }
 
     if (work->n < size1 || work->n < size2 || work->n < size3)
     {
-        GSL_ERROR ("not enough workspace provided", GSL_EINVAL);
+		std::cout << "not enough workspace provided" << std::endl; abort();
     }
 
     if (binary_logn (size1) == -1 || binary_logn (size2) == -1 || binary_logn (size3) == -1)
@@ -1305,13 +1305,13 @@ template <typename T> int gsl_wavelet3d_nstransform (const gsl_wavelet * w,
         //GSL_ERROR ("n is not a power of 2", GSL_EINVAL);
         printf("Warning: n is not a power of 2! n= %d,%d,%d\n",size1,size2,size3);
         printf("       : operations will be up to= %d,%d,%d\n",binary_upto_logn(size1),binary_upto_logn(size2),binary_upto_logn(size3));
-        GSL_ERROR ("n is not a power of 2", GSL_EINVAL);
+		std::cout << "n is not a power of 2" << std::endl; abort();
 		return -1;
     }
 
     if (size1 < 2)
     {
-        return GSL_SUCCESS;
+        return 0; // success
     }
 
 	int lvl=0;
@@ -1384,7 +1384,7 @@ template <typename T> int gsl_wavelet3d_nstransform (const gsl_wavelet * w,
 
 			lvl++;
 			if(lvl == levels)
-				return GSL_SUCCESS;
+				return 0; // success
         }
     }
     else
@@ -1451,7 +1451,7 @@ template <typename T> int gsl_wavelet3d_nstransform (const gsl_wavelet * w,
         }
     }
 
-    return GSL_SUCCESS;
+    return 0; // success
 }
 
 template <typename T>
@@ -1687,12 +1687,12 @@ int wavelet_transform (const gsl_wavelet * w,
 
   if (work->n < tot)
   {
-      GSL_ERROR ("not enough workspace provided", GSL_EINVAL);
+	  std::cout << "not enough workspace provided" << std::endl; abort();
   }
 
   if (n < 2)
   {
-      return GSL_SUCCESS;
+      return 0; // success
   }
   
 
@@ -1814,5 +1814,5 @@ int wavelet_transform (const gsl_wavelet * w,
 	  }
   }
 
-  return GSL_SUCCESS;
+  return 0; // success
 }
