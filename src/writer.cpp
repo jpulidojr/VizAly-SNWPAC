@@ -669,7 +669,7 @@ int arr_to_pvti(std::vector<int*>in,int fields, char * filename,int dx, int dy, 
         return 0;
     }
 
-    printf("Vector size: %d\n", in.size());
+	std::cout << "Vector size: " << in.size() << std::endl;
     int num_blocks = (int)in.size();
 
     size_t len = strlen(filename);

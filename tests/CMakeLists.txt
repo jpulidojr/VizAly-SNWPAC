@@ -15,7 +15,7 @@ set(PROJECT_SOURCE_FILES
 set(PROJECT_HEADER_FILES
 )
 
-option(TEST_ENABLE_HDF5 "Enable HDF5 support" ON)
+option(TEST_ENABLE_HDF5 "Enable HDF5 support" OFF)
 if(TEST_ENABLE_HDF5)
     find_package(HDF5 COMPONENTS C CXX HL NO_MODULE)
     if(HDF5_FOUND)

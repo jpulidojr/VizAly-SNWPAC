@@ -6,6 +6,7 @@
 #define EXPORT __declspec(dllexport)
 #else
 #define EXPORT
+#include <stdlib.h>
 #endif
 
 #include <cstdint>
