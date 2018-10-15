@@ -31,6 +31,7 @@ namespace lossywave
 		lvl = 0;
 		nthreads = 1;
 		mode = 1; // 1d mode by default
+		verbose = 0;
 	}
 
 	lossywave::lossywave(int * inparams)
@@ -39,33 +40,29 @@ namespace lossywave
 		pcnt = params[11];
 		lvl = params[12];
 		nthreads = 1;
-		
-		// debug output
-		std::cout << "Metadata for parameters:" << std::endl;
-		std::cout << "Type: " << params[0] << " Level: " << params[1] << std::endl;
-		std::cout << "Region: " << params[2] << " Padding: " << params[3] << std::endl;
-		std::cout << "Local dims: " << params[4] << " " << params[5] << " " << params[6] << std::endl;
-		std::cout << "Global dims: " << params[7] << " " << params[8] << " " << params[9] << std::endl;
-		std::cout << "Data precision: " << params[10] << " bytes." << std::endl;
-		if (params[2] >= 64)
-			std::cout << "Compression: Enabled" << std::endl;
-		if (params[2] >= 118)
-			std::cout << "LZ4 Enabled" << std::endl;
-		std::cout << "PcntThr: " << params[11] << " LvlThr: " << params[12] << std::endl;
+		verbose = 0;
 
 		mode = 1; // 1d
 		if (params[5] != 0) // 2d
 			mode = 2;
 		if (params[6] != 0) // 3d
 			mode = 3;
+	}
+
+	lossywave::~lossywave()
+	{
 
 	}
 
 	size_t lossywave::compress(void * data, size_t dataType, void *&output)
 	{
+		// Supresses cout to a string
+		if (verbose == 0)
+			old = std::cout.rdbuf(coutBuff.rdbuf());
+
 		gsl_wavelet *w;
 		gsl_wavelet_workspace *work;
-		size_t type = 303; // Cubic B-splines
+		size_t type = 404; // Cubic B-splines
 		w = gsl_wavelet_alloc(gsl_wavelet_bspline, type);
 		//gsl_wavelet_print(w);
 
@@ -221,12 +218,17 @@ namespace lossywave
 		size_t comp_size = encode(woutput, output);
 		//delete[] woutput;
 
+		if (verbose == 0)
+			std::cout.rdbuf(old);
+
 		return comp_size;
 	}
 
 
 	size_t lossywave::decompress(void *data, void *&output)
 	{
+		if (verbose == 0)
+			old = std::cout.rdbuf(coutBuff.rdbuf());
 
 		float * out;
 		//if (params[10] = 4)
@@ -238,7 +240,7 @@ namespace lossywave
 		// wavelet transform the data
 		gsl_wavelet *w;
 		gsl_wavelet_workspace *work;
-		size_t type = 303; // Cubic B-splines
+		size_t type = 404; // Cubic B-splines
 		w = gsl_wavelet_alloc(gsl_wavelet_bspline, type);
 
 		std::cout << "Total threads in this machine: " << omp_get_max_threads() << std::endl;
@@ -287,6 +289,8 @@ namespace lossywave
 		gsl_wavelet_free(w);
 		gsl_wavelet_workspace_free(work);
 
+		if (verbose == 0)
+			std::cout.rdbuf(old);
 		
 		return decode_size;
 	}
@@ -884,5 +888,22 @@ namespace lossywave
 		}*/
 
 		return dcmpBytes;
+	}
+
+	void lossywave::printParams()
+	{
+		// debug output
+		std::cout << "Metadata for parameters:" << std::endl;
+		std::cout << "Type: " << params[0] << " Level: " << params[1] << std::endl;
+		std::cout << "Region: " << params[2] << " Padding: " << params[3] << std::endl;
+		std::cout << "Local dims: " << params[4] << " " << params[5] << " " << params[6] << std::endl;
+		std::cout << "Global dims: " << params[7] << " " << params[8] << " " << params[9] << std::endl;
+		std::cout << "Data precision: " << params[10] << " bytes." << std::endl;
+		if (params[2] >= 64)
+			std::cout << "Compression: Enabled" << std::endl;
+		if (params[2] >= 118)
+			std::cout << "LZ4 Enabled" << std::endl;
+		std::cout << "PcntThr: " << params[11] << " LvlThr: " << params[12] << std::endl;
+		std::cout << "Mode: " << mode << std::endl;
 	}
 }

@@ -863,7 +863,9 @@ int * coeff_args(unsigned short type, unsigned short lvl, unsigned char reg, uns
 
 int free_args(int * args)
 {
-    delete [] args;
+	if(args)
+		delete [] args;
+
     return 1;
 }
 

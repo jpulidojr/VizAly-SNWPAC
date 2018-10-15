@@ -130,7 +130,7 @@ void quick_sort(double * output, double * input, int dir, size_t total)
         index[i] = i*total/numThreads; 
     index[numThreads] = total;
 
-    double start = omp_get_wtime();
+    //double start = omp_get_wtime();
     // Sort each individual thread/process
 #pragma omp parallel for private(i)
     for(i=0; i<numThreads; i++)
@@ -150,9 +150,9 @@ void quick_sort(double * output, double * input, int dir, size_t total)
     if( numThreads > 1 )
         arraymerge(output, total, index, numThreads, dir);
 
-    double end = omp_get_wtime();
+    //double end = omp_get_wtime();
 
-    fprintf(stderr,"sort time = %g s, where %g s was spent on merging\n", end-start, end-middle);
+    //fprintf(stderr,"sort time = %g s, where %g s was spent on merging\n", end-start, end-middle);
 
     delete[] index;
 }
@@ -169,14 +169,14 @@ void quick_sort_index(size_t * index, double * input, int dir, size_t total)
 
     std::pair<double,size_t> * temp = new std::pair<double,size_t>[total];
     
-    double startcopy = omp_get_wtime();
+    //double startcopy = omp_get_wtime();
     for( i=0; i<total; i++)
     {
         temp[i].first=input[i];
         temp[i].second=i;
     }
-    double endcopy = omp_get_wtime();
-    fprintf(stderr,"\ncopy time = %g s\n", endcopy-startcopy);
+    //double endcopy = omp_get_wtime();
+    //fprintf(stderr,"\ncopy time = %g s\n", endcopy-startcopy);
 
     // Lets speed things up
     //memcpy(output,input,total*sizeof(double));
@@ -201,23 +201,23 @@ void quick_sort_index(size_t * index, double * input, int dir, size_t total)
         //qsort(output+index[i], index[i+1]-index[i], sizeof(double), CmpDbl);
     }
 
-    double middle = omp_get_wtime();
+    //double middle = omp_get_wtime();
 
     // Merge the sorted blocks
     if( numThreads > 1 )
         arraymerge_index(temp, total, index, numThreads, dir);
 
-    double end = omp_get_wtime();
+    //double end = omp_get_wtime();
 
-    fprintf(stderr,"sort time = %g s, where %g s was spent on merging\n", end-start, end-middle);
+    //fprintf(stderr,"sort time = %g s, where %g s was spent on merging\n", end-start, end-middle);
 
     for( i=0; i<total; i++)
     {
         index[i] = temp[i].second;
     }
     //memcpy(index,temp,total*sizeof(size_t));
-    double endfinal = omp_get_wtime();
-    fprintf(stderr,"copy time = %g s\n", endfinal-end);
+    //double endfinal = omp_get_wtime();
+    //fprintf(stderr,"copy time = %g s\n", endfinal-end);
 
     delete[] indlist;
     delete[] temp;

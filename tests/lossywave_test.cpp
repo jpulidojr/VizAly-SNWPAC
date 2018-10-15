@@ -16,7 +16,7 @@
 
 using namespace std; 
 
-double argv_pcnt=100;
+double argv_pcnt=50;
 int argv_lvl=0;
 
 int main (int argc, char **argv)
@@ -71,15 +71,15 @@ int main (int argc, char **argv)
 
 	// Allocate memory for compression
 	void * compressed;
-	compressed = std::malloc(total * sizeof(float));
+	compressed = std::malloc(total * sizeof(input3d[0]));
 
 	// Compress
-	size_t cmpSize = lw.compress(input3d, sizeof(float), compressed);
+	size_t cmpSize = lw.compress(input3d, sizeof(input3d[0]), compressed);
 	cout << "Compressed size: " << cmpSize << endl;
 
 	// Allocate memory for decompression
 	void * decompressed;
-	decompressed = std::malloc(total * sizeof(float));
+	decompressed = std::malloc(total * sizeof(input3d[0]));
 
 	// Decompress
 	size_t dcmpSize = lw.decompress(compressed, decompressed);
