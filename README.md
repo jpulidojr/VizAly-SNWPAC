@@ -17,7 +17,7 @@ Matlab R2012a+
 - Wavelet Toolbox
 - Image Processing Toolbox
 
-7-zip (ZStandard) v15.xx or greater (Windows)
+7-zip (ZStandard) v15.xx for LZ4/BZip2 support
 
 ## Usage
 ```
