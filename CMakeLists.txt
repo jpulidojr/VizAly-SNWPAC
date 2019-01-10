@@ -53,6 +53,37 @@ set(PROJECT_INTERFACE_HEADER_FILES
 	include/lossywave.hpp
 )
 
+# External Dependencies
+set (EXTRA_LIBS "")
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
+
+OPTION (${NAME_ID}_USE_OPENMP "Use OpenMP" ON)
+if(${NAME_ID}_USE_OPENMP)
+    find_package(OpenMP)
+    if (OPENMP_FOUND)
+        set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+        set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+        set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
+  endif()
+endif()
+
+# For now manually build deps on windows
+if(WIN32)
+	find_package(LZ4 REQUIRED)
+	if (LZ4_FOUND)
+		include_directories(${LZ4_INCLUDE_DIR})
+		set (EXTRA_LIBS ${EXTRA_LIBS} ${LZ4_LIBRARY} )
+	endif()
+	
+else()
+	# 3rdparty libraries
+	add_subdirectory(3rdparty/lz4)
+	set (EXTRA_LIBS ${EXTRA_LIBS} lz4 )
+endif()
+
+
+# Testing files
 if(${NAME_ID}_TESTS)
 	add_subdirectory(tests)
 endif()
@@ -86,27 +117,6 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 target_include_directories(${PROJECT_NAME}
 	PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
-
-# External Dependencies
-set (EXTRA_LIBS "")
-
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
-
-OPTION (${NAME_ID}_USE_OPENMP "Use OpenMP" ON)
-if(${NAME_ID}_USE_OPENMP)
-    find_package(OpenMP)
-    if (OPENMP_FOUND)
-        set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-        set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-        set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
-  endif()
-endif()
-
-find_package(LZ4 REQUIRED)
-if (LZ4_FOUND)
-	include_directories(${LZ4_INCLUDE_DIR})
-	set (EXTRA_LIBS ${EXTRA_LIBS} ${LZ4_LIBRARY} )
-endif()
 
 # add library dependencies
 target_link_libraries(${PROJECT_NAME} ${EXTRA_LIBS} )
