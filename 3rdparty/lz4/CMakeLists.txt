@@ -13,18 +13,16 @@ include(ExternalProject)
 
 # download external project
 ExternalProject_Add( ${PROJECT_NAME}-external
-    #URL https://github.com/lz4/lz4/archive/master.zip
     GIT_REPOSITORY https://github.com/lz4/lz4.git
     GIT_TAG v1.8.2
     PREFIX ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-external
-	DEPENDS ""
+    DEPENDS ""
     PATCH_COMMAND ""
     CONFIGURE_COMMAND ""
     BUILD_COMMAND "make" "CFLAGS=-fPIC" 
     BUILD_IN_SOURCE 1 
     # disable install step
     INSTALL_COMMAND ""
-    #INSTALL_COMMAND ${BUILDEM_ENV_STRING} PREFIX=${BUILDEM_DIR} $(MAKE) install
     # disable anoying constant checks during build
     UPDATE_DISCONNECTED TRUE
     # Enable fPIC for static->dynamic builds
@@ -67,9 +65,6 @@ endif()
 add_dependencies(${PROJECT_NAME}
     ${PROJECT_NAME}-external
 )
-# target_link_libraries(${PROJECT_NAME}
-#     INTERFACE ${PROJECT_NAME}-external
-# )
 
 # add external project include directories
 # ISSUE: https://gitlab.kitware.com/cmake/cmake/issues/15689
@@ -79,7 +74,7 @@ add_dependencies(${PROJECT_NAME}
 #    INTERFACE ${SOURCE_DIR}/lib
 #)
 
-# Should work with older CMakes. Reqs line 48
+# Should work with older CMakes. Reqs. ln 46
 set_property(TARGET ${PROJECT_NAME} APPEND PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${SOURCE_DIR}/lib)
 
 endif (NOT lz4)
