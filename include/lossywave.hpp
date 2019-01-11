@@ -25,6 +25,7 @@ namespace lossywave
 
 		EXPORT lossywave();
 		EXPORT lossywave(int * inparams);
+        EXPORT lossywave(int * inparams, bool verbose);
 		EXPORT ~lossywave();
 
 		// data = n-D data array

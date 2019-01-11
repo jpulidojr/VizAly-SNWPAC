@@ -36,18 +36,23 @@ namespace lossywave
 
 	lossywave::lossywave(int * inparams)
 	{
-		params = inparams;
-		pcnt = params[11];
-		lvl = params[12];
-		nthreads = 1;
-		verbose = 0;
-
-		mode = 1; // 1d
-		if (params[5] != 0) // 2d
-			mode = 2;
-		if (params[6] != 0) // 3d
-			mode = 3;
+        lossywave(inparams, 0);
 	}
+
+    lossywave::lossywave(int * inparams, bool verbose)
+    {
+        params = inparams;
+        pcnt = params[11];
+        lvl = params[12];
+        nthreads = 1;
+        lossywave::verbose = verbose;
+
+        mode = 1; // 1d
+        if (params[5] != 0) // 2d
+            mode = 2;
+        if (params[6] != 0) // 3d
+            mode = 3;
+    }
 
 	lossywave::~lossywave()
 	{
