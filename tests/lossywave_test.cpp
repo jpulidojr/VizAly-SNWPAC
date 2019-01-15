@@ -64,7 +64,7 @@ int main (int argc, char **argv)
 					dims[0], dims[1], dims[2], 
 					sizeof(input3d[0]), argv_pcnt, 0 };
 	// -------- Parameters ----------
-	// { wave_type:404, chunk_level:0, region+compression_type , padding,
+	// { wave_type:404, chunk_level:0, region+(compression_type (+/-) quantization), padding,
 	//	local_dimx, local_dimy, local_dimz,
 	//	global_dimx, global_dimy, global_dimz,
 	//  value_size, pcnt_threshold, level_threshold }

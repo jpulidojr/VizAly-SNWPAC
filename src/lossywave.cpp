@@ -316,9 +316,9 @@ namespace lossywave
 	{
 		// Experimental ----------------
         size_t total = params[4];
-        if (mode == 2)
+        if (mode >= 2)
             total *= params[5];
-        if (mode == 3)
+        if (mode >= 3)
             total *= params[6];
 
 		// Count contiguous sectors of 0s for non-uniform data compression
@@ -378,9 +378,9 @@ namespace lossywave
 	size_t lossywave::encode(T * in, void *& out)
 	{
         size_t total = params[4];
-        if (mode == 2)
+        if (mode >= 2)
             total *= params[5];
-        if (mode == 3)
+        if (mode >= 3)
             total *= params[6];
 
         if (total == 0)
@@ -454,7 +454,7 @@ namespace lossywave
 			// Use a ring buffer????
 
 			size_t max_vals = datBytes / oval_sz;
-            //std::cout << " Using " << oval_sz << " byte prec. tot: " << total << " datbytes: " << datBytes << std::endl;
+            std::cout << " Using " << oval_sz << " byte prec. numel: " << total << " datbytes: " << datBytes << std::endl;
 			std::cout << " Encoding " << max_vals << " values.\n";
 
 			size_t sk = 0;
@@ -614,9 +614,9 @@ namespace lossywave
 	size_t lossywave::decode(void * in, T *& out)
 	{
         size_t total = params[4];
-        if (mode == 2)
+        if (mode >= 2)
             total *= params[5];
-        if (mode == 3)
+        if (mode >= 3)
             total *= params[6];
 
         if (total == 0)
@@ -939,7 +939,7 @@ namespace lossywave
 		// debug output
 		std::cout << "--- LW Metadata for input params ---" << std::endl;
 		std::cout << "Type: " << params[0] << " Level: " << params[1] << std::endl;
-		std::cout << "Region: " << params[2] << " Padding: " << params[3] << std::endl;
+		std::cout << "Quant/Region: " << params[2] << " Padding: " << params[3] << std::endl;
 		std::cout << "Local dims: " << params[4] << " " << params[5] << " " << params[6] << std::endl;
 		std::cout << "Global dims: " << params[7] << " " << params[8] << " " << params[9] << std::endl;
 		std::cout << "Data precision: " << params[10] << " bytes." << std::endl;
