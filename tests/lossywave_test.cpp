@@ -55,6 +55,9 @@ int main (int argc, char **argv)
 				cnt++;
 			}
 
+    size_t ogSize = total * sizeof(input3d[0]);
+    cout << "LW: Original size: " << ogSize << endl;
+
 	// Set compression parameters
 	int args[13] = { 404, 0, 128, 0, 
 					dims[0], dims[1], dims[2], 
@@ -66,29 +69,35 @@ int main (int argc, char **argv)
 	//	global_dimx, global_dimy, global_dimz,
 	//  value_size, pcnt_threshold, level_threshold }
 
-	// Declare LW instance
-	lossywave::lossywave lw(args);
-
+	// Declare LW instance, enable debugging output
+	lossywave::lossywave lw(args,true);
+    
 	// Allocate memory for compression
 	void * compressed;
-	compressed = std::malloc(total * sizeof(input3d[0]));
+	compressed = std::malloc(ogSize);
 
 	// Compress
 	size_t cmpSize = lw.compress(input3d, sizeof(input3d[0]), compressed);
-	cout << "Compressed size: " << cmpSize << endl;
+	cout << "LW: Compressed size: " << cmpSize << endl;
 
 	// Allocate memory for decompression
 	void * decompressed;
-	decompressed = std::malloc(total * sizeof(input3d[0]));
+	decompressed = std::malloc(ogSize);
 
 	// Decompress
 	size_t dcmpSize = lw.decompress(compressed, decompressed);
-	cout << "Decompressed size: " << dcmpSize << endl;
+	cout << "LW: Decompressed size: " << dcmpSize << endl;
 	
+    // Check if data is valid
+    if (ogSize == dcmpSize)
+        std::cout << "Data Verified!" << std::endl;
+    else
+        std::cout << "Invalid Data! Compression Error." << std::endl;
+    
 	// Compare compressed vs original
 	float * output3d = static_cast<float *>(decompressed);
 
-    cout << "Beginning comparison" << endl;
+    cout << "--Comparison--" << endl;
     double tot_en=0;
     double tot_diff=0;
     double mse=0;

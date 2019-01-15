@@ -477,7 +477,7 @@ namespace lossywave
 			//const int cmpBytes = LZ4_compress_fast_continue(lz4Stream, inBuf, cmpBuf, datBytes, cmpBufBytes, 1); /rolling
 			cmpBytes = LZ4_compress_default(inBuf, cmpBuf, datBytes, cmpBufBytes);
 
-			std::cout << "LZ4: Encoded " << cmpBytes << " bytes..";
+			std::cout << "LZ4: Encoded " << cmpBytes << " bytes." << std::endl;
 
 			// HACK: Free out buffer
 			//if (out)
@@ -611,7 +611,7 @@ namespace lossywave
 
 			int cmpBytes = *reinterpret_cast<int*>(ctoi);
 
-			std::cout << "LZ4: Reading in " << cmpBytes << " bytes..." << std::endl;
+			std::cout << "LZ4: Reading in " << cmpBytes << " bytes." << std::endl;
 
 			// copy to stringstream
 			//std::stringstream ss;
@@ -658,13 +658,13 @@ namespace lossywave
 
 			//ss.read(cmpBuf, cmpBytes);
 
-			std::cout << "Read in bytes..Decompressing LZ4..";
+			std::cout << "Bytes read..Decompressing LZ4." << std::endl;
 
 			// Allocate temporary memory
 			dcmpBytes = LZ4_decompress_safe(cmpBuf, outBuf, cmpBytes, total * oval_sz);
 			//delete[] cmpBuf;
 
-			std::cout << "...Done!" << std::endl;
+			std::cout << "LZ4: Done!" << std::endl;
 
 			// Copy byte memory into output data array
 			size_t sk = 0;
@@ -767,7 +767,7 @@ namespace lossywave
 			}
 
 			delete[] outBuf;
-			std::cout << "..LZ4 finished data copy!\n";
+			std::cout << "LZ4: Finished data copy!" << std::endl;
 
 		}
 		/*// Undo RL Encoding
