@@ -71,7 +71,8 @@ int main (int argc, char **argv)
 
 	// Declare LW instance, enable debugging output
 	lossywave::lossywave lw(args,true);
-    
+    lw.printParams();
+
 	// Allocate memory for compression
 	void * compressed;
 	compressed = std::malloc(ogSize);

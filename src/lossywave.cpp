@@ -36,7 +36,18 @@ namespace lossywave
 
 	lossywave::lossywave(int * inparams)
 	{
-        lossywave(inparams, 0);
+        //lossywave(inparams, false); //fails inparams passthrough
+        params = inparams;
+        pcnt = params[11];
+        lvl = params[12];
+        nthreads = 1;
+        verbose = false;
+
+        mode = 1; // 1d
+        if (params[5] != 0) // 2d
+            mode = 2;
+        if (params[6] != 0) // 3d
+            mode = 3;
 	}
 
     lossywave::lossywave(int * inparams, bool verbose)
@@ -304,7 +315,11 @@ namespace lossywave
 	void lossywave::analyze(T * data) 
 	{
 		// Experimental ----------------
-		size_t total = params[4] * params[5] * params[6];
+        size_t total = params[4];
+        if (mode == 2)
+            total *= params[5];
+        if (mode == 3)
+            total *= params[6];
 
 		// Count contiguous sectors of 0s for non-uniform data compression
 		// Based on run-length encoding
@@ -362,19 +377,32 @@ namespace lossywave
 	template <typename T>
 	size_t lossywave::encode(T * in, void *& out)
 	{
-		size_t total = params[4] * params[5] * params[6];
+        size_t total = params[4];
+        if (mode == 2)
+            total *= params[5];
+        if (mode == 3)
+            total *= params[6];
+
+        if (total == 0)
+        {
+            std::cout << "LW: Encoding error, zero data extents!" << std::endl;
+            return 0;
+        }
 		int cmpBytes = 0;
 
 		// Check if we are using lz4 on coefficients
 		if (params[2] >= 118)
 		{
+            size_t oval_sz = sizeof(T);
+            if (oval_sz == 0)
+                std::cout << "LZ4: Error zero data!" << std::endl;
+
 			std::cout << "Beginning LZ4 Routines...";
 			// Optional: Perform floating point to integer requantization:
 			// No Requantization if args[2]=128
 			// When it's 125, it's 128-125 = 3. We divide by 1000
 			// When it's 131, it's 128-131 = -3. Multibly by 1000
 			double mod_bits = 1;
-			size_t oval_sz = sizeof(T);
 
 			if (params[2] > 128) // Multiply (for small dyn range data)
 			{
@@ -426,6 +454,7 @@ namespace lossywave
 			// Use a ring buffer????
 
 			size_t max_vals = datBytes / oval_sz;
+            //std::cout << " Using " << oval_sz << " byte prec. tot: " << total << " datbytes: " << datBytes << std::endl;
 			std::cout << " Encoding " << max_vals << " values.\n";
 
 			size_t sk = 0;
@@ -584,7 +613,17 @@ namespace lossywave
 	template <typename T>
 	size_t lossywave::decode(void * in, T *& out)
 	{
-		size_t total = params[4] * params[5] * params[6];
+        size_t total = params[4];
+        if (mode == 2)
+            total *= params[5];
+        if (mode == 3)
+            total *= params[6];
+
+        if (total == 0)
+        {
+            std::cout << "LW: Decoding error, zero data extents!" << std::endl;
+            return 0;
+        }
 		int dcmpBytes = 0;
 
 		
@@ -898,7 +937,7 @@ namespace lossywave
 	void lossywave::printParams()
 	{
 		// debug output
-		std::cout << "Metadata for parameters:" << std::endl;
+		std::cout << "--- LW Metadata for input params ---" << std::endl;
 		std::cout << "Type: " << params[0] << " Level: " << params[1] << std::endl;
 		std::cout << "Region: " << params[2] << " Padding: " << params[3] << std::endl;
 		std::cout << "Local dims: " << params[4] << " " << params[5] << " " << params[6] << std::endl;
@@ -910,5 +949,6 @@ namespace lossywave
 			std::cout << "LZ4 Enabled" << std::endl;
 		std::cout << "PcntThr: " << params[11] << " LvlThr: " << params[12] << std::endl;
 		std::cout << "Mode: " << mode << std::endl;
+        std::cout << "-----------------------------------" << std::endl;
 	}
 }
