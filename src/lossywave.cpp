@@ -726,7 +726,7 @@ namespace lossywave
 					output[sz] = dbl_val;
 				}
 			}
-			else if (oval_sz == 8) // Type DOUBLE //TODO: This means no requantization
+			else if (oval_sz == 8) // Input type DOUBLE //TODO: This means no requantization
 			{
 				char conc[8];
 				T dbl_val;
@@ -760,10 +760,10 @@ namespace lossywave
 					//memcpy?
 				}
 			}
-			else if (oval_sz == 4) // Type FLOAT input, may be float/double output
+			else if (oval_sz == 4) // Input type FLOAT or Int,
 			{
 				char conc[4]; // INT SUPPORT
-				if (params[10] == 8) // Requantize ints to floats
+				if (params[10] == 8) // Requantize target doubles
 				{
 					int dbl_val;
 					for (size_t sz = 0; sz < total; sz++)
@@ -776,7 +776,7 @@ namespace lossywave
 						output[sz] = (T)dbl_val * mod_bits; // INT SUPPORT
 					}
 				}
-				else if (params[10] == 4)
+				else if (params[10] == 4) // Requantize target floats or int?
 				{
 					T dbl_val;
 					for (size_t sz = 0; sz < total; sz++)
@@ -785,13 +785,23 @@ namespace lossywave
 						{
 							conc[ind] = outBuf[(sz * sizeof(dbl_val)) + ind];
 						}
-						output[sz] = *reinterpret_cast<T*>(conc);
+                        dbl_val = *reinterpret_cast<int*>(conc);
+						output[sz] = (T)dbl_val * mod_bits;
 					}
 				}
 				else
 				{
-
-
+                    // Do the default and try to target original T data without requantization?
+                    // Left over fallback code
+                    T dbl_val;
+                    for (size_t sz = 0; sz < total; sz++)
+                    {
+                        for (size_t ind = 0; ind < 4; ind++)
+                        {
+                            conc[ind] = outBuf[(sz * sizeof(dbl_val)) + ind];
+                        }
+                        output[sz] = *reinterpret_cast<T*>(conc);
+                    }
 				}
 
 			}

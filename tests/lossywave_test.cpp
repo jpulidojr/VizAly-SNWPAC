@@ -1,9 +1,11 @@
 // lossywave_test.cpp
 // Author: Jesus Pulido
-// Simple example on how to use LossyWave
+// Simple example on how to use LossyWave Test
 // 
-// Usage: ./lossywave_test {pcnt}
+// Usage: ./lossywave_test {pcnt} {quant} {thr_lvl}
 //	  	  {pcnt} = Threshold percentage
+//	  	  {quant} = level of quantization
+//	  	  {thr_lvl} = Threshold by coeff hierarchy level. {pcnt} must be set to 100.
 
 #include <stdio.h>
 #include <iostream> 
@@ -16,7 +18,8 @@
 
 using namespace std; 
 
-double argv_pcnt=50;
+double argv_pcnt=50; // percentage of coefficients to threshold
+int argv_quant = 0;
 int argv_lvl=0;
 
 int main (int argc, char **argv)
@@ -30,13 +33,23 @@ int main (int argc, char **argv)
     if(argc == 3)
     {
         argv_pcnt = atof(argv[1]);
-        argv_lvl = atoi(argv[2]);
-        if(argv_pcnt == 100)
+        argv_quant = atoi(argv[2]);
+        cout << "Input percentage is " << argv_pcnt << endl;
+        cout << "Input quant is " << argv_quant << endl;
+    }
+    if (argc == 4)
+    {
+        argv_pcnt = atof(argv[1]);
+        argv_quant = atoi(argv[2]);
+        argv_lvl = atoi(argv[3]);
+        if (argv_pcnt == 100)
         {
             cout << "Input level is " << argv_lvl << endl;
-        }else{
+        }
+        else {
             cout << "Input percentage is " << argv_pcnt << endl;
         }
+        cout << "Input quant is " << argv_quant << endl;
     }
 	
 
@@ -51,7 +64,7 @@ int main (int argc, char **argv)
         for(int j=0; j< dims[1]; j++)
 			for (int k = 0; k < dims[2]; k++)
 			{
-				input3d[cnt] = i + j + k;
+                input3d[cnt] = i + j + k;// + (rand() / RAND_MAX);
 				cnt++;
 			}
 
@@ -59,7 +72,7 @@ int main (int argc, char **argv)
     cout << "LW: Original size: " << ogSize << endl;
 
 	// Set compression parameters
-	int args[13] = { 404, 0, 128, 0, 
+	int args[13] = { 404, 0, 128+argv_quant, 0,
 					dims[0], dims[1], dims[2], 
 					dims[0], dims[1], dims[2], 
 					sizeof(input3d[0]), argv_pcnt, 0 };
@@ -115,6 +128,8 @@ int main (int argc, char **argv)
 	    mse+=(pow((double)output3d[i]-input3d[i],(double)2.0));
 	    tot_diff += abs(output3d[i]-input3d[i]);
 
+        if (i < 10)
+            std::cout << "id: " << i << " og: " << input3d[i] << " comp: " << output3d[i] << std::endl;
     }
     mse /= (total);
 
