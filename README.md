@@ -4,9 +4,9 @@ LossyWave is a cubic B-Spline wavelet compressor for regular grid datasets (1D,2
 
 ## Requirements
 C++11 compatible compiler
+
 CMake v3.6 Minimum
 
-GSL 1.16 (with cubic B-Spline patches)
 LZ4 1.8.2
 
 ## Usage
