@@ -78,7 +78,10 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
         #IMPORTED_LOCATION ${SOURCE_DIR}/static/liblz4_static.lib #win32 doesnt work with prebuilt so
 )
 #rename .dll
-file(RENAME ${SOURCE_DIR}/dll/liblz4.so.1.8.2.dll ${SOURCE_DIR}/dll/liblz4.dll)
+if(EXISTS "${SOURCE_DIR}/dll/liblz4.so.1.8.2.dll")
+	file(RENAME ${SOURCE_DIR}/dll/liblz4.so.1.8.2.dll ${SOURCE_DIR}/dll/liblz4.dll)
+endif()
+
 endif()
 
 # add external project as dependency

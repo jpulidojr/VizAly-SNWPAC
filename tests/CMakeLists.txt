@@ -15,22 +15,12 @@ set(PROJECT_SOURCE_FILES
 set(PROJECT_HEADER_FILES
 )
 
-option(TEST_ENABLE_HDF5 "Enable HDF5 support" OFF)
-if(TEST_ENABLE_HDF5)
-    find_package(HDF5 COMPONENTS C CXX HL NO_MODULE)
-    if(HDF5_FOUND)
-        include_directories(${HDF5_INCLUDE_DIR})
-        set(HDF5_LIB_DIR ${HDF5_LIB_DIR} CACHE PATH "Location of HDF5 libraries")
-        link_directories(${HDF5_LIB_DIR})
-        set(HDF5_LIBS ${HDF5_LIBRARIES} libhdf5 libhdf5_cpp libszip libzlib )
-    endif()
-endif()
-
 # add executable target
 add_executable(${PROJECT_NAME}
     ${PROJECT_SOURCE_FILES}
     ${PROJECT_HEADER_FILES}
 )
+set(LW_PROGRAMS_BUILT ${PROJECT_NAME})
 
 # set c++ standard
 set_target_properties(${PROJECT_NAME} PROPERTIES
@@ -49,13 +39,6 @@ target_link_libraries(${PROJECT_NAME}
     PRIVATE lossywave
 )
 
-if(HDF5_FOUND)
-    target_link_libraries(${PROJECT_NAME} ${HDF5_LIBS})
-    add_definitions(-DUSE_HDF5)
-else()
-    target_link_libraries(${PROJECT_NAME})
-endif()
-
 find_package(OpenMP)
 if (OPENMP_FOUND)
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
@@ -63,7 +46,36 @@ if (OPENMP_FOUND)
     set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
 endif()
     
+#Add additional sample projects
+# add source files
+set(DPROJECT_SOURCE_FILES
+    LWDecomp.cpp
+)
+add_executable(LWDecomp ${DPROJECT_SOURCE_FILES})
+list(APPEND LW_PROGRAMS_BUILT LWDecomp)
+target_link_libraries(LWDecomp PRIVATE lossywave)
+target_include_directories(LWDecomp PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+option(TEST_ENABLE_HDF5 "Enable HDF5 support" OFF)
+if(TEST_ENABLE_HDF5)
+    find_package(HDF5 COMPONENTS C CXX HL NO_MODULE)
+    if(HDF5_FOUND)
+        include_directories(${HDF5_INCLUDE_DIR})
+        set(HDF5_LIB_DIR ${HDF5_LIB_DIR} CACHE PATH "Location of HDF5 libraries")
+        link_directories(${HDF5_LIB_DIR})
+        set(HDF5_LIBS ${HDF5_LIBRARIES} libhdf5 libhdf5_cpp libszip libzlib )
+    endif()
+endif()
+
+if(HDF5_FOUND)
+    target_link_libraries(LWDecomp ${HDF5_LIBS})
+    add_definitions(-DUSE_HDF5)
+else()
+    #target_link_libraries(${PROJECT_NAME})
+endif()
+
+
 # install instructions
-install(TARGETS ${PROJECT_NAME}
+install(TARGETS ${LW_PROGRAMS_BUILT}
     DESTINATION tests
 )
