@@ -11,23 +11,40 @@ project(lz4)
 # enable external project cmake module
 include(ExternalProject)
 
-# download external project
-ExternalProject_Add( ${PROJECT_NAME}-external
-    GIT_REPOSITORY https://github.com/lz4/lz4.git
-    GIT_TAG v1.8.2
-    PREFIX ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-external
-    DEPENDS ""
-    PATCH_COMMAND ""
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND "make" "CFLAGS=-fPIC" 
-    BUILD_IN_SOURCE 1 
-    # disable install step
-    INSTALL_COMMAND ""
-    # disable anoying constant checks during build
-    UPDATE_DISCONNECTED TRUE
-    # Enable fPIC for static->dynamic builds
-    #CMAKE_ARGS "-DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true"
-)
+if(WIN32)
+    # download external project binary
+    ExternalProject_Add( ${PROJECT_NAME}-external
+        URL https://github.com/lz4/lz4/releases/download/v1.8.2/lz4_v1_8_2_win64.zip
+        PREFIX ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-external
+        DEPENDS ""
+        PATCH_COMMAND ""
+        CONFIGURE_COMMAND ""
+        # disable build
+        BUILD_COMMAND ""
+        # disable install
+        INSTALL_COMMAND ""
+        # disable anoying constant checks during build
+        UPDATE_DISCONNECTED TRUE
+    )
+else()
+    # Build external project from source
+    ExternalProject_Add( ${PROJECT_NAME}-external
+        GIT_REPOSITORY https://github.com/lz4/lz4.git
+        GIT_TAG v1.8.2
+        PREFIX ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-external
+        DEPENDS ""
+        PATCH_COMMAND ""
+        CONFIGURE_COMMAND ""
+        BUILD_COMMAND "make" "CFLAGS=-fPIC" 
+        BUILD_IN_SOURCE 1 
+        # disable install step
+        INSTALL_COMMAND ""
+        # disable anoying constant checks during build
+        UPDATE_DISCONNECTED TRUE
+        # Enable fPIC for static->dynamic builds
+        #CMAKE_ARGS "-DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true"
+    )
+endif()
 
 message ("cmake_current_bin_dir ${CMAKE_CURRENT_BINARY_DIR} ...")
 
@@ -57,8 +74,11 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 )
 else() #WIN32
 set_target_properties(${PROJECT_NAME} PROPERTIES
-		IMPORTED_LOCATION ${BINARY_DIR}/lib/${CMAKE_CFG_INTDIR}/liblz4.lib
+		IMPORTED_LOCATION ${SOURCE_DIR}/dll/liblz4.lib
+        #IMPORTED_LOCATION ${SOURCE_DIR}/static/liblz4_static.lib #win32 doesnt work with prebuilt so
 )
+#rename .dll
+file(RENAME ${SOURCE_DIR}/dll/liblz4.so.1.8.2.dll ${SOURCE_DIR}/dll/liblz4.dll)
 endif()
 
 # add external project as dependency
@@ -75,6 +95,10 @@ add_dependencies(${PROJECT_NAME}
 #)
 
 # Should work with older CMakes. Reqs. ln 46
+if (UNIX)
 set_property(TARGET ${PROJECT_NAME} APPEND PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${SOURCE_DIR}/lib)
+else() #WIN32
+set_property(TARGET ${PROJECT_NAME} APPEND PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${SOURCE_DIR}/include)
+endif()
 
 endif (NOT lz4)

@@ -68,20 +68,9 @@ if(${NAME_ID}_USE_OPENMP)
   endif()
 endif()
 
-# For now manually build deps on windows
-if(WIN32)
-	find_package(LZ4 REQUIRED)
-	if (LZ4_FOUND)
-		include_directories(${LZ4_INCLUDE_DIR})
-		set (EXTRA_LIBS ${EXTRA_LIBS} ${LZ4_LIBRARY} )
-	endif()
-	
-else()
-	# 3rdparty libraries
-	add_subdirectory(3rdparty/lz4)
-	set (EXTRA_LIBS ${EXTRA_LIBS} lz4 )
-endif()
-
+# 3rdparty libraries
+add_subdirectory(3rdparty/lz4)
+set (EXTRA_LIBS ${EXTRA_LIBS} lz4 )
 
 # Testing files
 if(${NAME_ID}_TESTS)
