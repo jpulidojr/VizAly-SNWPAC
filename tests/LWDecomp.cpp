@@ -131,6 +131,18 @@ int main (int argc, char **argv)
 	float ** outdata = new float*[fields];
 	for(int fld = 0; fld<fields; fld++)
 	{
+		std::ifstream f;
+		// Try opening the file
+		f.open(paths[fld].c_str(), std::ifstream::binary);
+		if (f.fail()) {
+			std::cout << "Error opening file: " << paths[fld].c_str() << std::endl;
+			return 0;
+		}
+
+		// Read in data stream from file
+		void * compressed;
+		//float * coeffs = read_coefficients_md<float>(paths[fld].c_str(), args);
+
 		// Process arguments
 		int args[13];// = { 404, 0, 128 + argv_quant, 0,
 					//dims[0], dims[1], dims[2],
@@ -244,9 +256,6 @@ int main (int argc, char **argv)
 			}
 		}
 
-		// Read in data stream from file
-		void * compressed;
-		//float * coeffs = read_coefficients_md<float>(paths[fld].c_str(), args);
 
 		std::cout << "Decompressing field: " << fld+1 << " of " << fields << std::endl;
 		// Allocate memory for decompression

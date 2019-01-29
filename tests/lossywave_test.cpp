@@ -94,6 +94,9 @@ int main (int argc, char **argv)
 	size_t cmpSize = lw.compress(input3d, sizeof(input3d[0]), compressed);
 	cout << "LW: Compressed size: " << cmpSize << endl;
 
+	// Verify compressed header
+	lw.printHeader(compressed);
+
 	// Allocate memory for decompression
 	void * decompressed;
 	decompressed = std::malloc(ogSize);

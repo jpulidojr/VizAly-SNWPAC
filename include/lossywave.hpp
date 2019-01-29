@@ -37,8 +37,14 @@ namespace lossywave
 		// output = n-D data array
 		EXPORT size_t decompress(void *data, void *& output);
 
-		// Prints the internal parameters passed during init
+		// Prints the internal state parameters for the compressor
 		EXPORT void printParams();
+
+		// Prints the header information for a compressed data stream
+		EXPORT void printHeader(void * data);
+
+		// Returns header information on a compressed data stream
+		EXPORT int * peek(void * data);
 
 	protected:
 		int pcnt, lvl,  nthreads;

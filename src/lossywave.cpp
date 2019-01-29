@@ -389,6 +389,23 @@ namespace lossywave
             return 0;
         }
 		int cmpBytes = 0;
+		
+		// Write the header
+		//------
+		//write_uint16(FILE* fp, uint16_t i)
+		short tmp_s; char tmp_c; int tmp_i;
+		tmp_s = params[0]; memcpy((char*)out, &tmp_s, sizeof(short));
+		tmp_s = params[1]; memcpy((char*)out + 2 , &tmp_s, sizeof(short));
+		tmp_c = params[2]; memcpy((char*)out + 4, &tmp_c, sizeof(char));
+		tmp_s = params[3]; memcpy((char*)out + 5, &tmp_s, sizeof(short));
+		tmp_i = params[4]; memcpy((char*)out + 7, &tmp_i, sizeof(int));
+		tmp_i = params[5]; memcpy((char*)out + 11, &tmp_i, sizeof(int));
+		tmp_i = params[6]; memcpy((char*)out + 15, &tmp_i, sizeof(int));
+		tmp_i = params[7]; memcpy((char*)out + 19, &tmp_i, sizeof(int));
+		tmp_i = params[8]; memcpy((char*)out + 23, &tmp_i, sizeof(int));
+		tmp_i = params[9]; memcpy((char*)out + 27, &tmp_i, sizeof(int));
+		tmp_c = params[10]; memcpy((char*)out + 31, &tmp_c, sizeof(char));
+		// Header is written as 32 bytes
 
 		// Check if we are using lz4 on coefficients
 		if (params[2] >= 118)
@@ -399,7 +416,7 @@ namespace lossywave
 
 			std::cout << "Beginning LZ4 Routines...";
 			// Optional: Perform floating point to integer requantization:
-			// No Requantization if args[2]=128
+			// No Requantization if params[2]=128
 			// When it's 125, it's 128-125 = 3. We divide by 1000
 			// When it's 131, it's 128-131 = -3. Multibly by 1000
 			double mod_bits = 1;
@@ -513,16 +530,19 @@ namespace lossywave
 			//	delete[] out;
 
 			// Reallocate/reduce the size of the output + size of header
-			std::realloc(out, cmpBytes + 4);
+			std::realloc(out, cmpBytes + 4 + 32); // lz4:4, LW:32
 
 			//Write out the buffer size first
 			//write_uint16(FILE* fp, uint16_t i)
-			memcpy((int*)out, &cmpBytes, sizeof(cmpBytes));
+			//memcpy((int*)out + 8, &cmpBytes, sizeof(cmpBytes)); // Skip 32 bytes = 8 ints
+			memcpy((char*)out + 32, &cmpBytes, sizeof(cmpBytes)); // Skip 32 bytes
 
 			// Transfer bytestream
 			//out = cmpBuf;
-			memcpy((char*)out + 4, cmpBuf, cmpBytes);
+			memcpy((char*)out + 4 + 32, cmpBuf, cmpBytes);
 
+			// Update latest size
+			cmpBytes += 4 + 32; // Headers -lz4 : 4bytes, -LW : 32bytes
 			delete[] inBuf;
 			LZ4_freeStream(lz4Stream);
 		}
@@ -587,7 +607,7 @@ namespace lossywave
 			std::cout << "Contiguous skips: " << skips << std::endl;
 			
 			//Set stringstream to void *& out
-			memcpy(out, ss.str().c_str(), cmpBytes - 32);
+			memcpy((char*)out+32, ss.str().c_str(), wbytes);
 		}
 		// Just write coefficients to storage with zeros intact
 		else
@@ -604,7 +624,8 @@ namespace lossywave
 			//std::copy(ss.str().c_str(), ss.str().c_str() + ss.str().length() + 1, out);
 
 			//Set stringstream to void *& out
-			memcpy(out, ss.str().c_str(), cmpBytes);
+			memcpy((char*)out+32, ss.str().c_str(), cmpBytes);
+			cmpBytes += 32; // Add on header
 		}
 
 		return cmpBytes;
@@ -626,6 +647,11 @@ namespace lossywave
         }
 		int dcmpBytes = 0;
 
+		// Read the header
+		//------
+		//-or---
+		//------
+		//---just skip assuming its already been updated---
 		
 		// static cast out to type T here to write actual values
 		T * output = static_cast<T *>(out);
@@ -636,6 +662,7 @@ namespace lossywave
 		
 		//std::cout << "Opening "<< filename << std::endl;
 		//std::cout.precision(20);
+		// Check to see if we're undoing lz4 packing
 		if (params[2] >= 118)
 		{
 			
@@ -646,7 +673,7 @@ namespace lossywave
 
 			char ctoi[4];
 			for (int i = 0; i < 4; i++)
-				ctoi[i] = buff[i];
+				ctoi[i] = buff[i+32]; // Skip 32 byte LW header chunk
 
 			int cmpBytes = *reinterpret_cast<int*>(ctoi);
 
@@ -691,7 +718,8 @@ namespace lossywave
 			//int dbl_val; // INT SUPPORT
 
 			//char * cmpBuf = new char[cmpBytes];
-			char * cmpBuf = buff + 4;
+			char * cmpBuf = buff + 4 + 32;// Jump the lz4 4 byte header and 32 byte lw header
+
 			//memcpy(cmpBuf, buff + 4, cmpBytes);
 			char * outBuf = new char[total*oval_sz];
 
@@ -702,6 +730,10 @@ namespace lossywave
 			// Allocate temporary memory
 			dcmpBytes = LZ4_decompress_safe(cmpBuf, outBuf, cmpBytes, total * oval_sz);
 			//delete[] cmpBuf;
+
+			// TODO: Verify that lz4 was decompressed successfully
+			// -------------------------------------------------
+			// -------------------------------------------------
 
 			std::cout << "LZ4: Done!" << std::endl;
 
@@ -960,5 +992,61 @@ namespace lossywave
 		std::cout << "PcntThr: " << params[11] << " LvlThr: " << params[12] << std::endl;
 		std::cout << "Mode: " << mode << std::endl;
         std::cout << "-----------------------------------" << std::endl;
+	}
+
+	void lossywave::printHeader(void * data)
+	{
+		int * args = new int[11];
+
+		char * buff = static_cast<char *>(data);
+		char ctoi[4]; char ctos[2]; char ctoc[1];
+		// The header is exactly 32 bytes
+		ctos[0] = buff[0]; ctos[1] = buff[1];
+		args[0] = (int) *reinterpret_cast<unsigned short*>(ctos);
+		ctos[0] = buff[2]; ctos[1] = buff[3];
+		args[1] = (int) *reinterpret_cast<unsigned short*>(ctos);
+		ctoc[0] = buff[4];
+		args[2] = (int) *reinterpret_cast<unsigned char*>(ctoc);
+		ctos[0] = buff[5]; ctos[1] = buff[6];
+		args[3] = (int) *reinterpret_cast<unsigned short*>(ctos);
+		ctoi[0] = buff[7]; ctoi[1] = buff[8]; ctoi[2] = buff[9]; ctoi[3] = buff[10];
+		args[4] = (int) *reinterpret_cast<int*>(ctoi);
+		ctoi[0] = buff[11]; ctoi[1] = buff[12]; ctoi[2] = buff[13]; ctoi[3] = buff[14];
+		args[5] = (int) *reinterpret_cast<int*>(ctoi);
+		ctoi[0] = buff[15]; ctoi[1] = buff[16]; ctoi[2] = buff[17]; ctoi[3] = buff[18];
+		args[6] = (int) *reinterpret_cast<int*>(ctoi);
+		ctoi[0] = buff[19]; ctoi[1] = buff[20]; ctoi[2] = buff[21]; ctoi[3] = buff[22];
+		args[7] = (int) *reinterpret_cast<int*>(ctoi);
+		ctoi[0] = buff[23]; ctoi[1] = buff[24]; ctoi[2] = buff[25]; ctoi[3] = buff[26];
+		args[8] = (int) *reinterpret_cast<int*>(ctoi);
+		ctoi[0] = buff[27]; ctoi[1] = buff[28]; ctoi[2] = buff[29]; ctoi[3] = buff[30];
+		args[9] = (int) *reinterpret_cast<int*>(ctoi);
+		ctoc[0] = buff[31];
+		args[10] = (int) *reinterpret_cast<unsigned char*>(ctoc);
+
+		// Print debug output
+		std::cout << "--- LW Metadata for data stream ---" << std::endl;
+		std::cout << "Type: " << args[0] << " Level: " << args[1] << std::endl;
+		std::cout << "Quant/Region: " << args[2] << " Padding: " << args[3] << std::endl;
+		std::cout << "Local dims: " << args[4] << " " << args[5] << " " << args[6] << std::endl;
+		std::cout << "Global dims: " << args[7] << " " << args[8] << " " << args[9] << std::endl;
+		std::cout << "Data precision: " << args[10] << " bytes." << std::endl;
+		if (args[2] >= 64)
+			std::cout << "Compression: Enabled" << std::endl;
+		if (args[2] >= 118)
+			std::cout << "LZ4 Enabled" << std::endl;
+
+		delete [] args;
+
+	}
+
+	int * lossywave::peek(void * data)
+	{
+		int * args = new int[11];
+
+		// The header is exactly 32 bytes
+
+
+		return args;
 	}
 }
