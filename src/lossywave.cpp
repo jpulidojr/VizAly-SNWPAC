@@ -230,9 +230,6 @@ namespace lossywave
 		// requantize and encode coefficients
 		//analyze(woutput); // Analysis on RLE efficiency
 
-		for (int i = 0; i < 10; i++)
-			std::cout << "coeff: " << i << " input: " << woutput[i] << std::endl;
-
 		// woutput is a static_cast<float *> of output, so be careful
 		size_t comp_size = encode(woutput, output);
 		//delete[] woutput;
@@ -255,9 +252,6 @@ namespace lossywave
 
 		// decode coefficients and requantize
 		size_t decode_size = decode(data, out);
-
-		for (int i = 0; i < 10; i++)
-			std::cout << "coeff: " << i << " output: " << out[i] << std::endl;
 
 		// wavelet transform the data
 		gsl_wavelet *w;
@@ -396,23 +390,6 @@ namespace lossywave
         }
 		int cmpBytes = 0;
 		
-		// Write the header
-		//------
-		//write_uint16(FILE* fp, uint16_t i)
-		short tmp_s; char tmp_c; int tmp_i;
-		tmp_s = params[0]; memcpy((char*)out, &tmp_s, sizeof(short));
-		tmp_s = params[1]; memcpy((char*)out + 2 , &tmp_s, sizeof(short));
-		tmp_c = params[2]; memcpy((char*)out + 4, &tmp_c, sizeof(char));
-		tmp_s = params[3]; memcpy((char*)out + 5, &tmp_s, sizeof(short));
-		tmp_i = params[4]; memcpy((char*)out + 7, &tmp_i, sizeof(int));
-		tmp_i = params[5]; memcpy((char*)out + 11, &tmp_i, sizeof(int));
-		tmp_i = params[6]; memcpy((char*)out + 15, &tmp_i, sizeof(int));
-		tmp_i = params[7]; memcpy((char*)out + 19, &tmp_i, sizeof(int));
-		tmp_i = params[8]; memcpy((char*)out + 23, &tmp_i, sizeof(int));
-		tmp_i = params[9]; memcpy((char*)out + 27, &tmp_i, sizeof(int));
-		tmp_c = params[10]; memcpy((char*)out + 31, &tmp_c, sizeof(char));
-		// Header is written as 32 bytes
-
 		// Check if we are using lz4 on coefficients
 		if (params[2] >= 118)
 		{
@@ -525,7 +502,6 @@ namespace lossywave
 				std::cout << "ERROR: Invalid byte size!" << std::endl; return -1;
 			}
 			
-
 			//const int cmpBytes = LZ4_compress_fast_continue(lz4Stream, inBuf, cmpBuf, datBytes, cmpBufBytes, 1); /rolling
 			cmpBytes = LZ4_compress_default(inBuf, cmpBuf, datBytes, cmpBufBytes);
 
@@ -633,6 +609,23 @@ namespace lossywave
 			memcpy((char*)out+32, ss.str().c_str(), cmpBytes);
 			cmpBytes += 32; // Add on header
 		}
+
+		// Finally, write the header
+		//------ Be careful because out = in, do this in the end
+		//write_uint16(FILE* fp, uint16_t i)
+		short tmp_s; char tmp_c; int tmp_i;
+		tmp_s = params[0]; memcpy((char*)out, &tmp_s, sizeof(short));
+		tmp_s = params[1]; memcpy((char*)out + 2, &tmp_s, sizeof(short));
+		tmp_c = params[2]; memcpy((char*)out + 4, &tmp_c, sizeof(char));
+		tmp_s = params[3]; memcpy((char*)out + 5, &tmp_s, sizeof(short));
+		tmp_i = params[4]; memcpy((char*)out + 7, &tmp_i, sizeof(int));
+		tmp_i = params[5]; memcpy((char*)out + 11, &tmp_i, sizeof(int));
+		tmp_i = params[6]; memcpy((char*)out + 15, &tmp_i, sizeof(int));
+		tmp_i = params[7]; memcpy((char*)out + 19, &tmp_i, sizeof(int));
+		tmp_i = params[8]; memcpy((char*)out + 23, &tmp_i, sizeof(int));
+		tmp_i = params[9]; memcpy((char*)out + 27, &tmp_i, sizeof(int));
+		tmp_c = params[10]; memcpy((char*)out + 31, &tmp_c, sizeof(char));
+		// Header is written as 32 bytes
 
 		return cmpBytes;
 	}
