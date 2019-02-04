@@ -55,6 +55,11 @@ add_executable(LWDecomp ${DPROJECT_SOURCE_FILES})
 list(APPEND LW_PROGRAMS_BUILT LWDecomp)
 target_link_libraries(LWDecomp PRIVATE lossywave)
 target_include_directories(LWDecomp PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+set_target_properties(LWDecomp PROPERTIES
+    CXX_STANDARD 11
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF
+)
 
 option(TEST_ENABLE_HDF5 "Enable HDF5 support" OFF)
 if(TEST_ENABLE_HDF5)
