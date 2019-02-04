@@ -230,6 +230,9 @@ namespace lossywave
 		// requantize and encode coefficients
 		//analyze(woutput); // Analysis on RLE efficiency
 
+		for (int i = 0; i < 10; i++)
+			std::cout << "coeff: " << i << " input: " << woutput[i] << std::endl;
+
 		// woutput is a static_cast<float *> of output, so be careful
 		size_t comp_size = encode(woutput, output);
 		//delete[] woutput;
@@ -252,6 +255,9 @@ namespace lossywave
 
 		// decode coefficients and requantize
 		size_t decode_size = decode(data, out);
+
+		for (int i = 0; i < 10; i++)
+			std::cout << "coeff: " << i << " output: " << out[i] << std::endl;
 
 		// wavelet transform the data
 		gsl_wavelet *w;

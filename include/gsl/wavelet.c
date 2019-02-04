@@ -21,7 +21,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <gsl/gsl_wavelet.h>
+#include "gsl_wavelet.h" // <gsl/gsl_wavelet.h>
 
 #define RETURN_IF_NULL(x) if (!x) { return ; }
 

@@ -263,7 +263,7 @@ int main (int argc, char **argv)
 		decompressed = std::malloc(ogSize);
 
 		double startcopy = omp_get_wtime();
-		//gsl_wavelet_print(w);
+
 		size_t dcmpSize = lw.decompress(compressed, decompressed);
 
 		double endcopy = omp_get_wtime();

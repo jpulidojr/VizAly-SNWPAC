@@ -1,7 +1,7 @@
 #ifndef _WAVELET_H_
 #define _WAVELET_H_
 
-#include <gsl/gsl_wavelet.h>
+#include "gsl/gsl_wavelet.h"
 //#include <gsl/gsl_wavelet2d.h>
 
 // N-to-M conversion helper functions
