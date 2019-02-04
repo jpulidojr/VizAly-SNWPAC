@@ -119,6 +119,7 @@ int main (int argc, char **argv)
     double tot_diff=0;
     double mse=0;
     double max=-999;
+	double max_rel_err = 0;
     for(size_t i=0; i<total; i++)
     {
 	    if(output3d[i]>max)
@@ -130,6 +131,13 @@ int main (int argc, char **argv)
 	    tot_en += norm(value);
 	    mse+=(pow((double)output3d[i]-input3d[i],(double)2.0));
 	    tot_diff += abs(output3d[i]-input3d[i]);
+		double rel = abs(output3d[i] - input3d[i]);
+		if (std::abs(input3d[i]) > 1)
+		{
+			rel /= input3d[i];
+		}
+		if (rel > max_rel_err)
+			max_rel_err = rel;
 
         if (i < 10)
             std::cout << "id: " << i << " og: " << input3d[i] << " comp: " << output3d[i] << std::endl;
@@ -141,7 +149,9 @@ int main (int argc, char **argv)
     cout << "DIFF: " << tot_diff << endl;
 	cout << "MSE: " << mse << endl;
 	cout << "PSNR: " << PSNR << endl;
+	cout << "Max Rel Err: " << max_rel_err << endl;
 	cout << "Energy is " << tot_en << endl;
+	
 
     return 0;
 }
