@@ -1,6 +1,6 @@
-# VizAly-LossyWave: A lossy, wavelet-based compressor for scientific simulation data
+# VizAly-SNWPAC: **S**pli**N**e **W**avelet **P**acking and **C**ompression 
 
-LossyWave is a cubic B-Spline wavelet compressor for regular grid datasets (1D,2D,3D). The goal for this method is to provide a low cost, low overhead compression method for smart data reduction via a series of parameters achieving targetted levels of lossyness.
+**SN**o**WPAC** is a cubic B-Spline wavelet compressor for regular grid datasets (1D,2D,3D). Specializing in lossy compression for scientific data, the goal for this method is to provide a low cost, low overhead compression method for smart data reduction via a series of parameters achieving targetted levels of lossyness.
 
 ## Requirements
 C++11 compatible compiler
@@ -17,7 +17,7 @@ cmake ..
 
 make -j
 cd tests
-./lossywave_test
+./snwpac_test
 ```
 ## Contributors
 
