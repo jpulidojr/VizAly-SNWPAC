@@ -62,6 +62,7 @@ message ("source_dir ${SOURCE_DIR} ...")
 # otherwise this doesnt get set in the first pass
 execute_process(
     COMMAND ${CMAKE_COMMAND} -E make_directory ${SOURCE_DIR}/lib
+	COMMAND ${CMAKE_COMMAND} -E make_directory ${SOURCE_DIR}/include
 )
 
 # create imported target to be used as a dependency by programs
