@@ -1,5 +1,5 @@
-#ifndef LOSSYWAVE_H
-#define LOSSYWAVE_H
+#ifndef SNWPAC_H
+#define SNWPAC_H
 
 
 #ifdef _WIN32
@@ -16,17 +16,17 @@
 // interface includes
 //#include <wavelet.h>
 
-namespace lossywave
+namespace snwpac
 {
 
-	class lossywave
+	class snwpac
 	{
 	public:
 
-		EXPORT lossywave();
-		EXPORT lossywave(int * inparams);
-        EXPORT lossywave(int * inparams, bool verbose);
-		EXPORT ~lossywave();
+		EXPORT snwpac();
+		EXPORT snwpac(int * inparams);
+        EXPORT snwpac(int * inparams, bool verbose);
+		EXPORT ~snwpac();
 
 		// data = n-D data array
 		// dataType = sizeof(dataType)

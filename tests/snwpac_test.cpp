@@ -1,8 +1,8 @@
-// lossywave_test.cpp
+// snwpac_test.cpp
 // Author: Jesus Pulido
-// Simple example on how to use LossyWave Test
+// Simple example on how to use SnwPac Test
 // 
-// Usage: ./lossywave_test {pcnt} {quant} {thr_lvl}
+// Usage: ./snwpac_test {pcnt} {quant} {thr_lvl}
 //	  	  {pcnt} = Threshold percentage
 //	  	  {quant} = level of quantization
 //	  	  {thr_lvl} = Threshold by coeff hierarchy level. {pcnt} must be set to 100.
@@ -14,7 +14,7 @@
 #include <time.h>
 #include <omp.h>
 
-#include <lossywave.hpp>
+#include <snwpac.hpp>
 
 using namespace std; 
 
@@ -69,7 +69,7 @@ int main (int argc, char **argv)
 			}
 
     size_t ogSize = total * sizeof(input3d[0]);
-    cout << "LW: Original size: " << ogSize << endl;
+    cout << "SP: Original size: " << ogSize << endl;
 
 	// Set compression parameters
 	int args[13] = { 404, 0, 128+argv_quant, 0,
@@ -82,28 +82,28 @@ int main (int argc, char **argv)
 	//	global_dimx, global_dimy, global_dimz,
 	//  value_size, pcnt_threshold, level_threshold }
 
-	// Declare LW instance, enable debugging output
-	lossywave::lossywave lw(args,true);
-    lw.printParams();
+	// Declare SP instance, enable debugging output
+	snwpac::snwpac sp(args,true);
+    sp.printParams();
 
 	// Allocate memory for compression
 	void * compressed;
 	compressed = std::malloc(ogSize);
 
 	// Compress
-	size_t cmpSize = lw.compress(input3d, sizeof(input3d[0]), compressed);
-	cout << "LW: Compressed size: " << cmpSize << endl;
+	size_t cmpSize = sp.compress(input3d, sizeof(input3d[0]), compressed);
+	cout << "SP: Compressed size: " << cmpSize << endl;
 
 	// Verify compressed header
-	lw.printHeader(compressed);
+	sp.printHeader(compressed);
 
 	// Allocate memory for decompression
 	void * decompressed;
 	decompressed = std::malloc(ogSize);
 
 	// Decompress
-	size_t dcmpSize = lw.decompress(compressed, decompressed);
-	cout << "LW: Decompressed size: " << dcmpSize << endl;
+	size_t dcmpSize = sp.decompress(compressed, decompressed);
+	cout << "SP: Decompressed size: " << dcmpSize << endl;
 	
     // Check if data is valid
     if (ogSize == dcmpSize)

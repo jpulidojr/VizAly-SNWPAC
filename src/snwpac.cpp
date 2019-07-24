@@ -1,4 +1,4 @@
-#include <lossywave.hpp>
+#include <snwpac.hpp>
 
 #include <iostream>
 #include <stdio.h>
@@ -21,10 +21,10 @@
 
 #include "lz4.h"
 
-namespace lossywave
+namespace snwpac
 {
 
-	lossywave::lossywave()
+	snwpac::snwpac()
 	{
 		params = NULL;
 		pcnt = 10;
@@ -34,9 +34,9 @@ namespace lossywave
 		verbose = 0;
 	}
 
-	lossywave::lossywave(int * inparams)
+	snwpac::snwpac(int * inparams)
 	{
-        //lossywave(inparams, false); //fails inparams passthrough
+        //snwpac(inparams, false); //fails inparams passthrough
         params = inparams;
         pcnt = params[11];
         lvl = params[12];
@@ -50,13 +50,13 @@ namespace lossywave
             mode = 3;
 	}
 
-    lossywave::lossywave(int * inparams, bool verbose)
+    snwpac::snwpac(int * inparams, bool verbose)
     {
         params = inparams;
         pcnt = params[11];
         lvl = params[12];
         nthreads = 1;
-        lossywave::verbose = verbose;
+        snwpac::verbose = verbose;
 
         mode = 1; // 1d
         if (params[5] != 0) // 2d
@@ -65,12 +65,12 @@ namespace lossywave
             mode = 3;
     }
 
-	lossywave::~lossywave()
+	snwpac::~snwpac()
 	{
 
 	}
 
-	size_t lossywave::compress(void * data, size_t dataType, void *&output)
+	size_t snwpac::compress(void * data, size_t dataType, void *&output)
 	{
 		// Supresses cout to a string
 		if (verbose == 0)
@@ -195,7 +195,7 @@ namespace lossywave
 				start = clock();
 				int curdims[3] = { pDims[0],pDims[1],pDims[2] };
 				// Start from threshold level and zero out the rest up the hierarchy
-				for (int lv = lossywave::lvl; lv < max_levels; lv++)
+				for (int lv = snwpac::lvl; lv < max_levels; lv++)
 				{
 					int lvlsz = cdims[lv][0][1] + 1; // xmax+1 assuming 3D cube
 					lvlsz = lvlsz * lvlsz*lvlsz;
@@ -241,7 +241,7 @@ namespace lossywave
 	}
 
 
-	size_t lossywave::decompress(void *data, void *&output)
+	size_t snwpac::decompress(void *data, void *&output)
 	{
 		if (verbose == 0)
 			old = std::cout.rdbuf(coutBuff.rdbuf());
@@ -312,7 +312,7 @@ namespace lossywave
 	}
 
 	template <typename T>
-	void lossywave::analyze(T * data) 
+	void snwpac::analyze(T * data) 
 	{
 		// Experimental ----------------
         size_t total = params[4];
@@ -375,7 +375,7 @@ namespace lossywave
 	}
 
 	template <typename T>
-	size_t lossywave::encode(T * in, void *& out)
+	size_t snwpac::encode(T * in, void *& out)
 	{
         size_t total = params[4];
         if (mode >= 2)
@@ -385,7 +385,7 @@ namespace lossywave
 
         if (total == 0)
         {
-            std::cout << "LW: Encoding error, zero data extents!" << std::endl;
+            std::cout << "SP: Encoding error, zero data extents!" << std::endl;
             return 0;
         }
 		int cmpBytes = 0;
@@ -512,7 +512,7 @@ namespace lossywave
 			//	delete[] out;
 
 			// Reallocate/reduce the size of the output + size of header
-			std::realloc(out, cmpBytes + 4 + 32); // lz4:4, LW:32
+			std::realloc(out, cmpBytes + 4 + 32); // lz4:4, SP:32
 
 			//Write out the buffer size first
 			//write_uint16(FILE* fp, uint16_t i)
@@ -524,7 +524,7 @@ namespace lossywave
 			memcpy((char*)out + 4 + 32, cmpBuf, cmpBytes);
 
 			// Update latest size
-			cmpBytes += 4 + 32; // Headers -lz4 : 4bytes, -LW : 32bytes
+			cmpBytes += 4 + 32; // Headers -lz4 : 4bytes, -SP : 32bytes
 			delete[] inBuf;
 			LZ4_freeStream(lz4Stream);
 		}
@@ -631,7 +631,7 @@ namespace lossywave
 	}
 
 	template <typename T>
-	size_t lossywave::decode(void * in, T *& out)
+	size_t snwpac::decode(void * in, T *& out)
 	{
         size_t total = params[4];
         if (mode >= 2)
@@ -641,7 +641,7 @@ namespace lossywave
 
         if (total == 0)
         {
-            std::cout << "LW: Decoding error, zero data extents!" << std::endl;
+            std::cout << "SP: Decoding error, zero data extents!" << std::endl;
             return 0;
         }
 		int dcmpBytes = 0;
@@ -672,7 +672,7 @@ namespace lossywave
 
 			char ctoi[4];
 			for (int i = 0; i < 4; i++)
-				ctoi[i] = buff[i+32]; // Skip 32 byte LW header chunk
+				ctoi[i] = buff[i+32]; // Skip 32 byte SP header chunk
 
 			int cmpBytes = *reinterpret_cast<int*>(ctoi);
 
@@ -717,7 +717,7 @@ namespace lossywave
 			//int dbl_val; // INT SUPPORT
 
 			//char * cmpBuf = new char[cmpBytes];
-			char * cmpBuf = buff + 4 + 32;// Jump the lz4 4 byte header and 32 byte lw header
+			char * cmpBuf = buff + 4 + 32;// Jump the lz4 4 byte header and 32 byte SP header
 
 			//memcpy(cmpBuf, buff + 4, cmpBytes);
 			char * outBuf = new char[total*oval_sz];
@@ -975,10 +975,10 @@ namespace lossywave
 		return dcmpBytes;
 	}
 
-	void lossywave::printParams()
+	void snwpac::printParams()
 	{
 		// debug output
-		std::cout << "--- LW Metadata for input params ---" << std::endl;
+		std::cout << "--- SP Metadata for input params ---" << std::endl;
 		std::cout << "Type: " << params[0] << " Level: " << params[1] << std::endl;
 		std::cout << "Quant/Region: " << params[2] << " Padding: " << params[3] << std::endl;
 		std::cout << "Local dims: " << params[4] << " " << params[5] << " " << params[6] << std::endl;
@@ -993,7 +993,7 @@ namespace lossywave
         std::cout << "-----------------------------------" << std::endl;
 	}
 
-	void lossywave::printHeader(void * data)
+	void snwpac::printHeader(void * data)
 	{
 		int * args = new int[11];
 
@@ -1024,7 +1024,7 @@ namespace lossywave
 		args[10] = (int) *reinterpret_cast<unsigned char*>(ctoc);
 
 		// Print debug output
-		std::cout << "--- LW Metadata for data stream ---" << std::endl;
+		std::cout << "--- SP Metadata for data stream ---" << std::endl;
 		std::cout << "Type: " << args[0] << " Level: " << args[1] << std::endl;
 		std::cout << "Quant/Region: " << args[2] << " Padding: " << args[3] << std::endl;
 		std::cout << "Local dims: " << args[4] << " " << args[5] << " " << args[6] << std::endl;
@@ -1039,7 +1039,7 @@ namespace lossywave
 
 	}
 
-	int * lossywave::peek(void * data)
+	int * snwpac::peek(void * data)
 	{
 		int * args = new int[11];
 

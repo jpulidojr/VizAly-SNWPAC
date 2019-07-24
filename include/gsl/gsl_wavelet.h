@@ -17,8 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef __GSL_LWWAVELET_H__
-#define __GSL_LWWAVELET_H__
+#ifndef __GSL_SPWAVELET_H__
+#define __GSL_SPWAVELET_H__
 
 #if !defined( GSL_FUN )
 #  if !defined( GSL_DLL )
@@ -106,4 +106,4 @@ GSL_FUN int gsl_wavelet_transform_inverse (const gsl_wavelet * w,
 
 __END_DECLS
 
-#endif /* __GSL_LWWAVELET_H__ */
+#endif /* __GSL_SPWAVELET_H__ */

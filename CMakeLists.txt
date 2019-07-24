@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.6)
 
 # TODO: Make sure source files are added into the msvc project to compile correctly
 
-project(lossywave LANGUAGES C CXX)
+project(snwpac LANGUAGES C CXX)
 
 string(TOUPPER ${PROJECT_NAME} NAME_ID)
 
@@ -24,7 +24,7 @@ option(${NAME_ID}_INSTALL
  )
 
 set(PROJECT_SOURCE_FILES
-	src/lossywave.cpp
+	src/snwpac.cpp
 	src/writer.cpp
 	src/reader.cpp
 	src/quick_sort.cpp
@@ -32,7 +32,7 @@ set(PROJECT_SOURCE_FILES
 )
 
 set(PROJECT_HEADER_FILES
-	include/lossywave.hpp
+	include/snwpac.hpp
 	include/writer.h
 	include/writer.inl
 	include/reader.h
@@ -50,7 +50,7 @@ set(PROJECT_HEADER_FILES
 
 # interface header files for install
 set(PROJECT_INTERFACE_HEADER_FILES
-	include/lossywave.hpp
+	include/snwpac.hpp
 )
 
 # External Dependencies

@@ -1,9 +1,9 @@
-// LWDecomp.cpp
+// SPDecomp.cpp
 // Author: Jesus Pulido
-// Simple LW decompressor with several 3D file formats: Bin, HDF5, vti.
+// Simple snwpac decompressor with several 3D file formats: Bin, HDF5, vti.
 // Note: HDF5 support must be enabled via cmake to work.
 // 
-// Usage: ./LWDecomp {input} {output}
+// Usage: ./SPDecomp {input} {output}
 //	  	  {input} = input header file (text)
 //	  	  {output} = output filename (.bin | .h5 | .vti)
 
@@ -14,7 +14,7 @@
 #include <string>
 #include <stdio.h>
 
-#include "lossywave.hpp"
+#include "snwpac.hpp"
 
 #include <omp.h> //Only for timings
 
@@ -61,7 +61,7 @@ int main (int argc, char **argv)
     }
 	else
 	{
-		cout << "Usage: LWDecomp <input_header> <output> " << endl;
+		cout << "Usage: SPDecomp <input_header> <output> " << endl;
 
 		return 0;
 	}
@@ -150,8 +150,8 @@ int main (int argc, char **argv)
 					//dims[0], dims[1], dims[2],
 					//sizeof(input3d[0]), argv_pcnt, 0 };
 
-		lossywave::lossywave lw(args, true);
-		lw.printParams();
+		snwpac::snwpac sp(args, true);
+		sp.printParams();
 
 		/*int * args = read_md(paths[fld].c_str());
 		if(args==0)
@@ -265,7 +265,7 @@ int main (int argc, char **argv)
 
 		double startcopy = omp_get_wtime();
 
-		size_t dcmpSize = lw.decompress(compressed, decompressed);
+		size_t dcmpSize = sp.decompress(compressed, decompressed);
 
 		double endcopy = omp_get_wtime();
 		std::cout << "Decompression time = " << endcopy-startcopy << " secs." <<std::endl;
