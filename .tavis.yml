@@ -1,0 +1,17 @@
+language: cpp
+dist: bionic
+addons:
+  apt:
+    packages:
+    - cmake
+compiler:
+- gcc
+
+script:
+  ############################################################################
+  # Build main and tests
+  ############################################################################
+  - mkdir -p build
+  - cd build
+  - cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=ON .. 
+  - make
