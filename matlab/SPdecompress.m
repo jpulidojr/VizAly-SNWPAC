@@ -1,5 +1,5 @@
-function [image] = LWdecompress(file7z)
-% LWDECOMPRESS  Decompresses file
+function [image] = SPdecompress(file7z)
+% SPDECOMPRESS  Decompresses file
 %
 %   file7z = File target location in 7z format
 %
@@ -9,7 +9,7 @@ function [image] = LWdecompress(file7z)
 
 %   Example:
 %   file7z = 'D:\my.7z';
-%   myImage = LWdecompress(file7z);
+%   myImage = SPdecompress(file7z);
 
 image = 0;
 
@@ -53,12 +53,26 @@ end
 
 % Read in coefficient file and reconstruct
 % Read Quantized input
-if exist('deep32_sizes.mat', 'file') == 2
-    %load('sizes.mat'); %NOTE: This is a temporary solution, will not need file in the future
-    load('deep32_sizes.mat'); %NOTE: This is a temporary solution, will not need file in the future
+%if exist('deep32_sizes.mat', 'file') == 2
+%    load('deep32_sizes.mat'); %NOTE: This is a temporary solution, will not need file in the future
+%    coeffs2 = qbinto3d(file,16910127,1,1,0,1); % (DLS Data)
+%    if exist('deep32_qhier.mat', 'file') == 2
+%        fprintf('..Custom requant ..');
+%        load('deep32_qhier.mat');
+        
+if exist('lsst_sizes.mat', 'file') == 2
+    load('lsst_sizes.mat'); %NOTE: This is a temporary solution, will not need file in the future
     %%%num_coeff = sum(sizes(:,1).*sizes(:,2))
-    %coeffs2 = qbinto3d(file,16418841,1,1,0,1); % (LSST) Number of coeffs will be dynamic later
-    coeffs2 = qbinto3d(file,16910127,1,1,0,1); % (DLS Data)
+    coeffs2 = qbinto3d(file,16418841,1,1,0,1); % (LSST) Number of coeffs will be dynamic later
+    if exist('lsst_qhier.mat', 'file') == 2
+        fprintf('..Custom requant ..');
+        load('lsst_qhier.mat');
+        
+        %%%% Continue break here %%%%
+        % Apply custon requantization
+        coeffs2 = requant_coeff(coeffs2,sizes,qhier);
+    end
+    
     fprintf('..Reconstructing..');
     image = waverec2(coeffs2,sizes,wave_type);
 else

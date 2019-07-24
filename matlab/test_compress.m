@@ -6,8 +6,8 @@
 close all;
 
 %Load in Fits file
-%FileName='D:\Data\LSST\data\lsst_e_898670970_f0_R02_S00_E000.fits';
-FileName='data\Deep_32.fits';
+FileName='data\lsst_e_898670970_f0_R02_S00_E000_stacked.fits';
+%FileName='data\Deep_32.fits';
 f=dir(FileName);
 fsizeMB = f.bytes/1024/1024; %Query original file size
 
@@ -41,23 +41,35 @@ max_levels = 8;
 do_pcnt=1;
 if do_pcnt==1
     %Percentage-based thresholding
-    for pcnt=5:5:100
-
+    %for pcnt=99:-3:1
+    %for pcnt=55:-5:50
+    for pcnt=[100]
+        pcnt
         % Wave operation
         tic
         [coeffs,sizes] = wavedec2(ori_im,max_levels,wave_type);
         toc
-
-        % Threshold
-        tic
-        coeffs2 = thrdwt2d_all(coeffs,sizes,pcnt);
-        toc
         
+        % Analyze the coefficients
+        analyze_coeff(coeffs,sizes);
+               
+        % Perform custom quantization per level
+        %qhier = [ 100; 100; 10; 10; 10 ; 10; 10; 10; 1/100; 1 ]; % DLS
+        qhier = [ 100; 100; 10; 10; 10 ; 10; 10; 1; 1; 1 ]; % LSST
+        
+        % Apply Quantization using hierarchical weights
+        qcoeffs = analyze_coeff(coeffs,sizes, qhier);
+        save('lsst_qhier.mat','qhier'); % Temporary for now
+
         str_num = sprintf('%03d',pcnt);
-        out_name = strcat('deep32_Q32coeffs_',str_num,'.bin');
+        out_name = strcat('lsst_HQ32coeffs_',str_num,'.bin'); %3 for '3 bits' : 2 by default
         
         % Write Compressed output
-        LWcompress(out_name,coeffs2,sizes);
+        SPcompress(out_name,qcoeffs,sizes); % Quantized Coeffs
+        %SPcompress(out_name,coeffs2,sizes); % Original Coeffs
+        
+        % Dumps raw coefficients (fp)
+        %arr3dtobin(out_name,coeffs2,numel(coeffs2),1,1,0,1)
         
         continue;
         

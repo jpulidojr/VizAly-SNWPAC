@@ -6,8 +6,8 @@
 close all;
 
 %Load in Fits file
-%FileName='D:\Data\LSST\data\lsst_e_898670970_f0_R02_S00_E000.fits';
-FileName='data\Deep_32.fits';
+%FileName='data\Deep_32.fits';
+FileName='data\lsst_e_898670970_f0_R02_S00_E000_stacked.fits';
 
 f=dir(FileName);
 fsizeMB = f.bytes/1024/1024; %Query original file size
@@ -41,15 +41,16 @@ max_levels = 8;
 do_pcnt=1;
 if do_pcnt==1
     %Percentage-based thresholding
-    for pcnt=5:5:100
+    %for pcnt=5:5:100
+    for pcnt=100
         %load coeffs from disc
         str_num = sprintf('%03d',pcnt);
-        out_name = strcat('.\\deep32_Q32coeffs_',str_num,'.bin.lz4'); %Load the fast LZ4 version
+        out_name = strcat('.\\lsst_HQ32coeffs_',str_num,'.bin.lz4'); %Load the fast LZ4 version
         
         fprintf('Processing file %s \n',out_name);
         % Quantized output
         if exist(out_name, 'file') == 2
-            imgout = LWdecompress(out_name);
+            imgout = SPdecompress(out_name);
             if (imgout == 0)
                fprintf('Error: Decompression failed!\n')
                continue;
