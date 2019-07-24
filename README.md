@@ -19,6 +19,9 @@ make -j
 cd tests
 ./snwpac_test
 ```
+## Build Status
+[![Build Status](https://travis-ci.org/jpulidojr/VizAly-SNWPAC.svg?branch=master)](https://travis-ci.org/jpulidojr/VizAly-SNWPAC)
+
 ## Contributors
 
 Lead Developer: Jesus Pulido
